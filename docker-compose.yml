@@ -1,0 +1,19 @@
+
+version: '3'
+services:
+
+
+  postgres:
+    build: ./db
+    ports:
+      - "5432:5432"
+
+  app-auth:
+    build: ./services/app-auth
+    ports:
+      - "8080:8080"
+
+  app-otp:
+    build: ./services/app-otp
+    ports:
+      - "50051:50051"

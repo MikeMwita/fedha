@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package expense;
+
+option go_package="github.com/MikeMwita/fedha-go-gen.grpc/expense";
+
+message MonthlySummaryRequest {
+  int32 year = 1;
+  int32 month = 2;
+}
+
+message MonthlySummaryResponse {
+  int32 year = 1;
+  int32 month = 2;
+  double total_expenses = 3;
+  double total_income = 4;
+  double remaining_balance = 5;
+  repeated ExpenseSummary expenses = 6;
+}
+
+message ExpenseSummary {
+  string title = 1;
+  double amount = 2;
+  string category = 3;
+}

@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Fedha API
+  description: Fedha API
+  version: 2022-04-01
+  termsOfService: https://usefedha.ke/terms
+  contact:
+    name: Fedha
+    url: https://usefedha.ke
+servers:
+  - url: 'http://127.0.0.1:4010'
+    description: 'Mock server'
+  - url: 'http://localhost:9005/v1'
+    description: 'Local'
+  - url: 'https://staging-api.usefedha.ke/v1'
+    description: 'Staging'
+  - url: 'https://api.usefedha.ke/v1'
+    description: 'Production'
+paths:
+  /users/{userId}/show:
+    summary: this shows a single user
+    description: single user
+    get:
+      security: []
+      summary: A GET request to /users/{userId}
+      operationId: getUserById
+      description: get user by id
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: user id
+          schema:
+            type: string
+            example: dlfhlds-sdkfbkjsdbf-sdkfbjk
+      responses:
+        '200':
+          description: user object response
+          content:
+            application/json:
+              schema:
+                type: object
+                description: user object
+                properties:
+                  name:
+                    type: string
+                    example: John Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  /signin:
+    summary: Signing in users who have already created accounts
+    description: user sign in
+    post:
+      summary: A post request to sign in users
+      security: []
+      operationId: signIn
+      tags:
+        - Signin
+      description: signin post request
+      requestBody:
+        description: signin request object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: user email
+                  type: string
+                  example: johndoe@gmail.com
+                password:
+                  description: user password
+                  type : string
+                  example: dennisPassword
+                  minLength: 6
+                  maxLength: 16
+                  required:
+                    - email
+                    - password
+      responses:
+        '200':
+          description: user signin response
+          content:
+            application/json:
+              schema:
+                properties:
+                  access_token:
+                    type: string
+                    example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+                  refresh_token:
+                    type: string
+                    example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+                  expires_in:
+                    type: string
+                    example: "202301023"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+
+  /signup:
+    summary: Signup for users to get account
+    description:  User account signup
+    post:
+      summary: A POST request to sign up for
+      security: []
+      operationId: signUp
+      tags:
+        - Signup
+      description: sign up post
+      requestBody:
+        description: signup request object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: full user name
+                  type: string
+                  example: john doe
+                email:
+                  type: string
+                  description: valid email
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  description: strong password
+                  example: secureP@ssword
+                  minLength: 6
+                  maxLength: 16
+                confirm_password:
+                  type: string
+                  example: secureP@ssword
+                  minLength: 6
+                  maxLength: 16
+              required:
+                - name
+                - password
+                - email
+                - confirm_password
+      responses:
+        '200':
+          description: succesfully signed in
+          content:
+            application/json:
+              schema:
+                properties:
+                  name:
+                    type: string
+                    example: Joe doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+tags:
+  - name: Users
+    description: Users path
+  - name: Signup
+    description: signup description
+  - name: Signin
+    description: signin description

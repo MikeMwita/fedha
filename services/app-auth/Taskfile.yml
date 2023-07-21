@@ -1,0 +1,14 @@
+
+version: '3'
+fedha:
+  yaml:
+tasks:
+  gin-types:
+    cmds:
+      - oapi-codegen --package=dto  --generate types ../../docs/fedhaapp_openapi.yaml> internal/dto/http.gen.go
+    silent: false
+
+  gin-handlers:
+    cmds:
+      - oapi-codegen --package=handlers --generate gin ../../docs/fedhaapp_openapi.yaml> internal/routes/handlers/handler.gen.go
+    silent: false

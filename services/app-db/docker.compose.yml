@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  # Go application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+    # Add any specific environment variables for the Go application here
+    # For example, MY_APP_ENV_VAR=value
+    # Or if you use the env.docker file:
+    # env_file: env.docker
+    depends_on:
+      - db
+
+  # PostgreSQL service
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pg_data:

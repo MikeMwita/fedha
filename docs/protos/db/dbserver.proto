@@ -1,0 +1,39 @@
+syntax="proto3";
+
+
+import "balance.proto";
+import "expense.proto";
+import "income.proto";
+import "monthly_summary.proto";
+
+
+import "google/protobuf/empty.proto";
+package db;
+option go_package="github.com/MikeMwita/fedha-go-gen.grpc/db";
+
+
+//EXPENSES
+service DbService {
+  rpc CreateExpense (ExpenseRequest) returns (ExpenseResponse);
+  rpc GetExpense (GetExpenseRequest) returns (ExpenseResponse);
+  rpc UpdateExpense (UpdateExpenseRequest) returns (ExpenseResponse);
+  rpc DeleteExpense (DeleteExpenseRequest) returns (DeleteExpenseResponse);
+
+
+  //INCOMES
+  rpc CreateIncome(CreateIncomeRequest) returns (CreateIncomeResponse) {}
+  rpc GetIncome(GetIncomeRequest) returns (GetIncomeResponse) {}
+  rpc UpdateIncome(UpdateIncomeRequest) returns (UpdateIncomeResponse) {}
+  rpc DeleteIncome(DeleteIncomeRequest) returns (DeleteIncomeResponse) {}
+
+  //BALANCES
+  rpc GetRemainingBalance(RemainingBalanceRequest) returns (RemainingBalanceResponse) {}
+
+
+
+  //MONTHLY SUMMARY
+  rpc GenerateMonthlySummary(MonthlySummaryRequest) returns (MonthlySummaryResponse) {}
+
+
+}
+

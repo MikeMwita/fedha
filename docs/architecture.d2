@@ -1,0 +1,13 @@
+vpc: {
+third-party: {
+sms: {
+}
+}
+backend <-> database
+backend -> third-party.sms
+backend <-> frontend
+backend <-> redis
+database -> backup
+liquibase -> schema -> database
+backend <-> NATs
+}

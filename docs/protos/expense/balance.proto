@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+option go_package="github.com/MikeMwita/fedha-go-gen.grpc/expense";
+
+package expense;
+
+message RemainingBalanceRequest {
+  repeated google.protobuf.Timestamp dates = 1;
+}
+
+message RemainingBalanceResponse {
+  double remaining_balance = 1;
+}

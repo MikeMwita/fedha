@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+option go_package="github.com/MikeMwita/fedha-go-gen.grpc/db";
+
+package db;
+
+message Income {
+  string id = 1;
+  double amount = 2;
+  google.protobuf.Timestamp date = 3;
+}
+
+message CreateIncomeRequest {
+  double amount = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+message CreateIncomeResponse {
+  string income_id = 1;
+}
+
+message GetIncomeRequest {
+  string income_id = 1;
+}
+
+message GetIncomeResponse {
+  Income income = 1;
+}
+
+message UpdateIncomeRequest {
+  string income_id = 1;
+  double amount = 2;
+  google.protobuf.Timestamp date = 3;
+}
+
+message UpdateIncomeResponse {
+  string income_id = 1;
+}
+
+message DeleteIncomeRequest {
+  string income_id = 1;
+}
+
+message DeleteIncomeResponse {
+  string message = 1;
+}
