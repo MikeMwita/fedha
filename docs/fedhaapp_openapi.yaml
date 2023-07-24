@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Fedha API
   description: Fedha API
-  version: 2022-04-01
+  version: 2023-04-01
   termsOfService: https://usefedha.ke/terms
   contact:
     name: Fedha
@@ -60,55 +60,105 @@ paths:
                     type: string
                   error:
                     type: string
-  /signin:
-    summary: Signing in users who have already created accounts
-    description: user sign in
+  /auth/login:
+    summary: Login with user credentials
+    description: User login
     post:
-      summary: A post request to sign in users
-      security: []
-      operationId: signIn
+      summary: A POST request to login with user credentials
+      operationId: login
       tags:
-        - Signin
-      description: signin post request
+        - Login
+      description: login post
       requestBody:
-        description: signin request object
+        description: login request object
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  description: user email
-                  type: string
-                  example: johndoe@gmail.com
-                password:
-                  description: user password
-                  type : string
-                  example: dennisPassword
-                  minLength: 6
-                  maxLength: 16
-                  required:
-                    - email
-                    - password
+              $ref: "#/components/schemas/LoginRequest"
+
       responses:
-        '200':
-          description: user signin response
+        "200":
+          description: successfully logged in
           content:
             application/json:
               schema:
+                $ref: "#/components/schemas/LoginResponseData"
+        "400":
+          description: Default error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+
+
+  /auth/register:
+    summary: Register new users to the system
+    description: User account registration
+    post:
+      summary: A POST request to registering new users
+      operationId: register
+      tags:
+        - Register
+      description: register post
+      requestBody:
+        description: registration request object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+
+      responses:
+        "200":
+          description: successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponseData"
+        "400":
+          description: Default error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+
+  /api/v1/token/refresh:
+    summary: Refresh access token
+    description: Endpoint to refresh the access token.
+    get:
+      summary: Refresh access token
+      operationId: refreshToken
+      tags:
+        - Auth
+      description: Refresh the access token for an authenticated user.
+      parameters:
+        - name: refresh_Token
+          in: query
+          required: true
+          description: Refresh token obtained during login.
+          schema:
+            type: string
+            example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+      responses:
+        '200':
+          description: New access token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
                 properties:
                   access_token:
                     type: string
-                    example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
-                  refresh_token:
-                    type: string
-                    example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+
+                    example: new_access_token_here
                   expires_in:
                     type: string
                     example: "202301023"
         default:
-          description: error
+          description: Error
           content:
             application/json:
               schema:
@@ -117,19 +167,102 @@ paths:
                     type: string
                   error:
                     type: string
-
-  /signup:
-    summary: Signup for users to get account
-    description:  User account signup
-    post:
-      summary: A POST request to sign up for
-      security: []
-      operationId: signUp
+  /api/v1/logout:
+    summary: Logout user
+    description: Endpoint to log out an authenticated user.
+    delete:
+      summary: Logout user
+      operationId: userLogout
       tags:
-        - Signup
-      description: sign up post
+        - Auth
+      description: Logout the authenticated user by invalidating their access token.
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: User logged out successfully.
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  /api/v1/expense_types:
+    summary: Get a list of expense types
+    description: Endpoint to retrieve a paginated list of expense types.
+    get:
+      summary: Get a list of expense types
+      operationId: getExpenseTypes
+      tags:
+        - App
+      description: Retrieve a paginated list of expense types.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page number for pagination.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          required: false
+          description: Number of items per page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: List of expense types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    expense_type_id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: Food
+                    description:
+                      type: string
+                      example: Expenses related to food
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  /api/v1/expense_type:
+    summary: Create a new expense type
+    description: Endpoint to create a new expense type.
+    post:
+      summary: Create a new expense type
+      operationId: createExpenseType
+      tags:
+        - App
+      description: Create a new expense type with the provided details.
       requestBody:
-        description: signup request object
+        description: Expense type creation request object
         required: true
         content:
           application/json:
@@ -137,44 +270,32 @@ paths:
               type: object
               properties:
                 name:
-                  description: full user name
                   type: string
-                  example: john doe
-                email:
+                  example: Food
+                description:
                   type: string
-                  description: valid email
-                  example: john.doe@example.com
-                password:
-                  type: string
-                  description: strong password
-                  example: secureP@ssword
-                  minLength: 6
-                  maxLength: 16
-                confirm_password:
-                  type: string
-                  example: secureP@ssword
-                  minLength: 6
-                  maxLength: 16
+                  example: Expenses related to food
               required:
                 - name
-                - password
-                - email
-                - confirm_password
       responses:
         '200':
-          description: succesfully signed in
+          description: Expense type created successfully
           content:
             application/json:
               schema:
+                type: object
                 properties:
+                  expense_type_id:
+                    type: integer
+                    example: 1
                   name:
                     type: string
-                    example: Joe doe
-                  email:
+                    example: Food
+                  description:
                     type: string
-                    example: john.doe@example.com
+                    example: Expenses related to food
         default:
-          description: error
+          description: Error
           content:
             application/json:
               schema:
@@ -186,7 +307,107 @@ paths:
 tags:
   - name: Users
     description: Users path
-  - name: Signup
-    description: signup description
-  - name: Signin
-    description: signin description
+  - name: Register
+    description: registration description
+  - name: Login
+    description: login  description
+  - name: Auth
+    description : auth description
+  - name: App
+    description: app endpoints
+
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john_doe
+          pattern: "^[a-zA-Z0-9_]+$"
+        password:
+          type: string
+          example: secureP@ssword
+          minLength: 6
+        full_name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+      required:
+        - username
+        - password
+        - full_name
+        - email
+
+    RegisterResponseData:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john_doe
+        full_name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        password_changed_at:
+          type: string
+          format: date-time
+          example: "2023-07-22T12:34:56Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-07-22T12:34:56Z"
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john_doe
+          pattern: "^[a-zA-Z0-9_]+$"
+        password:
+          type: string
+          example: secureP@ssword
+          minLength: 6
+      required:
+        - username
+        - password
+
+    LoginResponseData:
+      type: object
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+        access_token:
+          type: string
+          example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+        access_token_expires_at:
+          type: string
+          format: date-time
+          example: "2023-07-23T12:34:56Z"
+        refresh_token:
+          type: string
+          example: kjsdbjbkjdsfbk.sdfkbkjsdbfkjkdjs.khdsbhbsd
+        refresh_token_expires_at:
+          type: string
+          format: date-time
+          example: "2023-10-22T12:34:56Z"
+        user:
+          $ref: "#/components/schemas/RegisterResponseData"
+    Response:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+
+
+

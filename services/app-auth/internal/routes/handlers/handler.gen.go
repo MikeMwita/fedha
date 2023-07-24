@@ -13,12 +13,24 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// A post request to sign in users
-	// (POST /signin)
-	SignIn(c *gin.Context)
-	// A POST request to sign up for
-	// (POST /signup)
-	SignUp(c *gin.Context)
+	// Create a new expense type
+	// (POST /api/v1/expense_type)
+	CreateExpenseType(c *gin.Context)
+	// Get a list of expense types
+	// (GET /api/v1/expense_types)
+	GetExpenseTypes(c *gin.Context, params GetExpenseTypesParams)
+	// Logout user
+	// (DELETE /api/v1/logout)
+	UserLogout(c *gin.Context)
+	// Refresh access token
+	// (GET /api/v1/token/refresh)
+	RefreshToken(c *gin.Context, params RefreshTokenParams)
+	// A POST request to login with user credentials
+	// (POST /auth/login)
+	Login(c *gin.Context)
+	// A POST request to registering new users
+	// (POST /auth/register)
+	Register(c *gin.Context)
 	// A GET request to /users/{userId}
 	// (GET /users/{userId}/show)
 	GetUserById(c *gin.Context, userId string)
@@ -33,8 +45,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// SignIn operation middleware
-func (siw *ServerInterfaceWrapper) SignIn(c *gin.Context) {
+// CreateExpenseType operation middleware
+func (siw *ServerInterfaceWrapper) CreateExpenseType(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -43,11 +55,32 @@ func (siw *ServerInterfaceWrapper) SignIn(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.SignIn(c)
+	siw.Handler.CreateExpenseType(c)
 }
 
-// SignUp operation middleware
-func (siw *ServerInterfaceWrapper) SignUp(c *gin.Context) {
+// GetExpenseTypes operation middleware
+func (siw *ServerInterfaceWrapper) GetExpenseTypes(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetExpenseTypesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", c.Request.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %s", err), http.StatusBadRequest)
+		return
+	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -56,7 +89,79 @@ func (siw *ServerInterfaceWrapper) SignUp(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.SignUp(c)
+	siw.Handler.GetExpenseTypes(c, params)
+}
+
+// UserLogout operation middleware
+func (siw *ServerInterfaceWrapper) UserLogout(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UserLogout(c)
+}
+
+// RefreshToken operation middleware
+func (siw *ServerInterfaceWrapper) RefreshToken(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RefreshTokenParams
+
+	// ------------- Required query parameter "refresh_Token" -------------
+
+	if paramValue := c.Query("refresh_Token"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument refresh_Token is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "refresh_Token", c.Request.URL.Query(), &params.RefreshToken)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter refresh_Token: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.RefreshToken(c, params)
+}
+
+// Login operation middleware
+func (siw *ServerInterfaceWrapper) Login(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Login(c)
+}
+
+// Register operation middleware
+func (siw *ServerInterfaceWrapper) Register(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Register(c)
 }
 
 // GetUserById operation middleware
@@ -110,7 +215,11 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.POST(options.BaseURL+"/signin", wrapper.SignIn)
-	router.POST(options.BaseURL+"/signup", wrapper.SignUp)
+	router.POST(options.BaseURL+"/api/v1/expense_type", wrapper.CreateExpenseType)
+	router.GET(options.BaseURL+"/api/v1/expense_types", wrapper.GetExpenseTypes)
+	router.DELETE(options.BaseURL+"/api/v1/logout", wrapper.UserLogout)
+	router.GET(options.BaseURL+"/api/v1/token/refresh", wrapper.RefreshToken)
+	router.POST(options.BaseURL+"/auth/login", wrapper.Login)
+	router.POST(options.BaseURL+"/auth/register", wrapper.Register)
 	router.GET(options.BaseURL+"/users/:userId/show", wrapper.GetUserById)
 }

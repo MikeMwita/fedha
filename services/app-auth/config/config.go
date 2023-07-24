@@ -15,11 +15,11 @@ type Database struct {
 	Dbname   string
 }
 
-//type Jwt struct {
-//	Secret            string
-//	ExpiryMinutes     int
-//	RefreshExpiryDays int
-//}
+type Jwt struct {
+	Secret            string
+	ExpiryMinutes     int
+	RefreshExpiryDays int
+}
 
 type Redis struct {
 	Port     string

@@ -1,11 +1,9 @@
 syntax="proto3";
 
-
 import "balance.proto";
 import "expense.proto";
 import "income.proto";
 import "monthly_summary.proto";
-
 
 import "google/protobuf/empty.proto";
 package db;
