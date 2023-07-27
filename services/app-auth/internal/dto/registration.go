@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// RegisterRequest defines model for RegisterRequest.
 type RegisterReq struct {
 	Email    openapi_types.Email `json:"email"`
 	FullName string              `json:"full_name"`
@@ -13,7 +12,6 @@ type RegisterReq struct {
 	Username string              `json:"username"`
 }
 
-// RegisterResponseData defines model for RegisterResponseData.
 type RegisterRes struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	Email     *string    `json:"email,omitempty"`

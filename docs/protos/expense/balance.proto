@@ -12,3 +12,4 @@ message RemainingBalanceRequest {
 message RemainingBalanceResponse {
   double remaining_balance = 1;
 }
+

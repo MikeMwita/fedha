@@ -9,8 +9,8 @@ import "monthly_summary.proto";
 
 import "google/protobuf/empty.proto";
 package expense;
-option go_package="github.com/MikeMwita/fedha-go-gen.grpc/expense";
-
+//option go_package="github.com/MikeMwita/fedha-go-gen.grpc/expense";
+option go_package="github.com/MikeMwita/fedha/docs/protos/expense";
 
 //EXPENSES
 service ExpenseService {
