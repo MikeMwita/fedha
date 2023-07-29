@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core /adapters"
+	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
 )
 

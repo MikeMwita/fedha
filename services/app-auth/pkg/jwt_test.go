@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core /entity"
+	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
 	"os"

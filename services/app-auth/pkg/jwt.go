@@ -3,7 +3,7 @@ package pkg
 import (
 	"errors"
 	"fmt"
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core /entity"
+	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/golang-jwt/jwt"
 	"os"
 	"time"

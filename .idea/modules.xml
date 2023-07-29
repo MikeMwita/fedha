@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/backend-everyshilling/.idea/backend-everyshilling.iml" filepath="$USER_HOME$/backend-everyshilling/.idea/backend-everyshilling.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/fedha.iml" filepath="$PROJECT_DIR$/.idea/fedha.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../simplebank-master/.idea/simplebank-master.iml" filepath="$PROJECT_DIR$/../simplebank-master/.idea/simplebank-master.iml" />
     </modules>
   </component>
 </project>

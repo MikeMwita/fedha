@@ -1,3 +1,5 @@
+-- name: CreateUsers :one
+
 CREATE TABLE "User" (
                         "Username" varchar UNIQUE,
                         "Full_Name" varchar,
@@ -15,7 +17,7 @@ CREATE TABLE "ExpenseType" (
 CREATE TABLE "Expense" (
                            "ExpenseID" int PRIMARY KEY,
                            "ExpenseTypeID" int,
-                           "Amount" "decimal(10, 2)",
+                           "Amount" int,
                            "Description" varchar,
                            "Created_At" timestamp
 );

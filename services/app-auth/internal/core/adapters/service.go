@@ -8,5 +8,5 @@ type AuthService interface {
 }
 
 type SessionService interface {
-	Invalidate() dto.DefaultRes[]
+	Invalidate() dto.DefaultRes[string]
 }

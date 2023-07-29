@@ -6,10 +6,10 @@ import (
 )
 
 type DbConfig struct {
-	Host       string
-	Port       string
-	DbUsername string
-	DbPassword string
+	Host     string
+	Port     string
+	Dbname   string
+	Password string
 }
 
 func DbDnsConn() (string, error) {
@@ -41,9 +41,9 @@ func newDbConfig() (*DbConfig, error) {
 	}
 
 	return &DbConfig{
-		Host:       getDbHost,
-		Port:       getPort,
-		DbUsername: getDbUsername,
-		DbPassword: getDbPassword,
+		Host:     getDbHost,
+		Port:     getPort,
+		Dbname:   getDbUsername,
+		Password: getDbPassword,
 	}, nil
 }

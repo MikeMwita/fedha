@@ -3,7 +3,7 @@ name: ci-test
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
   test:
@@ -26,15 +26,14 @@ jobs:
       - name: Go setup
         uses: actions/checkout@v2
 
-
       - name: Set up Go
         run: go version
         id: go
 
       - name: Install golang-migrate
         run: |
-          curl -L https://github:com/golang-migrate/migrate/releases/download/v4:16:2/migrate:darwin-amd64:tar:gz | tar xvz
-          sudo  mv migrate.linux-amd64.tar.gz /usr/bin/migrate
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate.linux-amd64 /usr/local/bin/migrate
           which migrate
 
       - name: Start PostgreSQL
@@ -43,12 +42,44 @@ jobs:
           docker exec -d postgres pg_ctl start -D /var/lib/postgresql/data -l /var/lib/postgresql/logfile
           sleep 5 # Wait for PostgreSQL to start
 
-
       - name: Run migrations
         run: make migrateup
 
+  # Add the sqlc workflow here
+  sqlc:
+    name: sqlc vet
+    on:
+     push:
+        branches:
+          - master
 
-#      - name: Test
-#        run: make test
+    runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: "postgres:15"
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
+    env:
+      PG_PORT: ${{ job.services.postgres.ports['5432'] }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: sqlc-dev/setup-sqlc@v3
+        with:
+          sqlc-version: '1.19.0'
+
+      # Connect and migrate your database here. This is an example which runs
+      # commands from a `schema.sql` file.
+      - run: psql -h localhost -U postgres -p $PG_PORT -d postgres -f schema.sql
+        env:
+          PGPASSWORD: postgres
+
+      - run: sqlc vet
