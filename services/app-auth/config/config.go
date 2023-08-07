@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-//we will be implementing Redis||JWT||Db structs
+//we will be implementing Redis||JWT||Db
 
 type Database struct {
 	Host     string
@@ -15,6 +15,10 @@ type Database struct {
 	Dbname   string
 }
 
+type DatabaseService struct {
+	Port string
+	Host string
+}
 type Jwt struct {
 	Secret            string
 	ExpiryMinutes     int

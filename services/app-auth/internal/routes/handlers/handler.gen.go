@@ -16,15 +16,12 @@ type ServerInterface interface {
 	// Create a new expense type
 	// (POST /api/v1/expense_type)
 	CreateExpenseType(c *gin.Context)
-	// Get a list of expense types
-	// (GET /api/v1/expense_types)
-	GetExpenseTypes(c *gin.Context, params GetExpenseTypesParams)
 	// Logout user
 	// (DELETE /api/v1/logout)
 	UserLogout(c *gin.Context)
 	// Refresh access token
-	// (GET /api/v1/token/refresh)
-	RefreshToken(c *gin.Context, params RefreshTokenParams)
+	// (POST /api/v1/token/refresh)
+	RefreshToken(c *gin.Context)
 	// A POST request to login with user credentials
 	// (POST /auth/login)
 	Login(c *gin.Context)
@@ -58,40 +55,6 @@ func (siw *ServerInterfaceWrapper) CreateExpenseType(c *gin.Context) {
 	siw.Handler.CreateExpenseType(c)
 }
 
-// GetExpenseTypes operation middleware
-func (siw *ServerInterfaceWrapper) GetExpenseTypes(c *gin.Context) {
-
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetExpenseTypesParams
-
-	// ------------- Optional query parameter "page" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "page", c.Request.URL.Query(), &params.Page)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	// ------------- Optional query parameter "per_page" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetExpenseTypes(c, params)
-}
-
 // UserLogout operation middleware
 func (siw *ServerInterfaceWrapper) UserLogout(c *gin.Context) {
 
@@ -108,26 +71,6 @@ func (siw *ServerInterfaceWrapper) UserLogout(c *gin.Context) {
 // RefreshToken operation middleware
 func (siw *ServerInterfaceWrapper) RefreshToken(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params RefreshTokenParams
-
-	// ------------- Required query parameter "refresh_Token" -------------
-
-	if paramValue := c.Query("refresh_Token"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument refresh_Token is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "refresh_Token", c.Request.URL.Query(), &params.RefreshToken)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter refresh_Token: %s", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -135,7 +78,7 @@ func (siw *ServerInterfaceWrapper) RefreshToken(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.RefreshToken(c, params)
+	siw.Handler.RefreshToken(c)
 }
 
 // Login operation middleware
@@ -216,9 +159,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	}
 
 	router.POST(options.BaseURL+"/api/v1/expense_type", wrapper.CreateExpenseType)
-	router.GET(options.BaseURL+"/api/v1/expense_types", wrapper.GetExpenseTypes)
 	router.DELETE(options.BaseURL+"/api/v1/logout", wrapper.UserLogout)
-	router.GET(options.BaseURL+"/api/v1/token/refresh", wrapper.RefreshToken)
+	router.POST(options.BaseURL+"/api/v1/token/refresh", wrapper.RefreshToken)
 	router.POST(options.BaseURL+"/auth/login", wrapper.Login)
 	router.POST(options.BaseURL+"/auth/register", wrapper.Register)
 	router.GET(options.BaseURL+"/users/:userId/show", wrapper.GetUserById)

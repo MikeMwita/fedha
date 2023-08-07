@@ -2,17 +2,25 @@ package app_auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func main() {
+
+	// Create the repo instance
+	repo := repo.NewRepo()
+
+	// Create the auth service instance
+	authService := auth.NewAuthService(repo)
+
+	// Create the handlers instance
+	handlers := handlers.NewHandlers(authService)
+
+	// Create the gin engine
 	r := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Initialized app-auth",
-		})
-	})
+	// Register the handlers
+	handlers.Register(r)
 
+	// Run the server
 	r.Run(":5000")
 }

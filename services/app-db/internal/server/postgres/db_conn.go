@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// FOR GORM
 var db *gorm.DB
 var err error
 

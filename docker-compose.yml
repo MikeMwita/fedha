@@ -13,7 +13,7 @@ services:
     ports:
       - "8080:8080"
 
-  app-otp:
-    build: ./services/app-otp
+  app-db:
+    build: ./services/app-db
     ports:
-      - "50051:50051"
+      - "8081:8081"

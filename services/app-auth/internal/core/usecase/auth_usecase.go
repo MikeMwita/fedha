@@ -3,37 +3,60 @@ package usecase
 import (
 	"context"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
+	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
+	"github.com/gin-gonic/gin"
 )
 
-type AuthUseCase struct {
+type AuthUsecase struct {
 	authService    adapters.AuthService
 	sessionService adapters.SessionService
 }
 
-func (a AuthUseCase) Register(ctx context.Context, user dto.RegisterReq) (*dto.RegisterRes, error) {
-	// Call the authentication service to handle user registration
-	registerResponse, err := a.Register(ctx, user)
+func (a AuthUsecase) GetUserById(c *gin.Context, userId string) (string, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (a AuthUsecase) Register(ctx context.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error) {
+
+	res, err := a.authService.Register(data)
 	if err != nil {
 		return nil, err
 	}
-	return registerResponse, nil
+	return res, nil
 }
 
-func (a AuthUseCase) Login(ctx context.Context, user dto.LoginInitRequest) (*dto.LoginInitResponseData, error) {
-	loginResponse, err := a.Login(ctx, user)
+func (a AuthUsecase) Login(ctx context.Context, data dto.LoginRequest) (*dto.LoginResponseData, error) {
+	res, err := a.authService.Login(data)
 	if err != nil {
-		// Handle any errors that may occur during the login process
 		return nil, err
 	}
-
-	// Return the login response
-	return loginResponse, nil
+	return res, nil
 }
 
-func NewAuthUseCase(as adapters.AuthService, ss adapters.SessionService) adapters.AuthUseCase {
-	return &AuthUseCase{
+func (a AuthUsecase) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
+	res, err := a.authService.RefreshToken(data)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (a AuthUsecase) UpdateUser(ctx context.Context, user entity.User) (*entity.User, error) {
+	res, err := a.authService.UpdateUser(user)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (a AuthUsecase) UserLogout(c *gin.Context) {
+
+}
+
+func NewAuthUsecase(as adapters.AuthService, ss adapters.SessionService) adapters.AuthUseCase {
+	return &AuthUsecase{
 		authService:    as,
-		sessionService: ss,
-	}
+		sessionService: ss}
 }

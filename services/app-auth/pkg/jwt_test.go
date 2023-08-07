@@ -14,7 +14,7 @@ func TestGenerateToken(t *testing.T) {
 		UserName: "testuser",
 		UserId:   "123",
 	}
-	tokenString, err := generateToken(user)
+	tokenString, err := GenerateToken(user)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tokenString)
 }
@@ -24,7 +24,7 @@ func TestValidateToken(t *testing.T) {
 		UserName: "testuser",
 		UserId:   "123",
 	}
-	tokenString, err := generateToken(user)
+	tokenString, err := GenerateToken(user)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tokenString)
 

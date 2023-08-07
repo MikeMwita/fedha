@@ -14,7 +14,6 @@ var (
 	port = flag.Int("port", 50051, "gRPC server port")
 )
 
-// serves grpc requests for our service
 type Server struct {
 	db.UnimplementedDbServiceServer
 	config *config.Config

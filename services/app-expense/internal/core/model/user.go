@@ -6,5 +6,3 @@ type User struct {
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
-
-//expenses relating to an individual user

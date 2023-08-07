@@ -12,8 +12,14 @@ type BalanceService struct {
 }
 
 func (b BalanceService) GetRemainingBalance(ctx context.Context, in *db.RemainingBalanceRequest, opts ...grpc.CallOption) (*db.RemainingBalanceResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	totalIncome := b.balanceRepo.GetTotalIncome(ctx, in.Dates)
+	totalExpense := b.balanceRepo.GetTotalExpense(ctx, in.Dates)
+	remainingBalance := totalIncome.(float64) - totalExpense.(float64)
+
+	return &db.RemainingBalanceResponse{
+		RemainingBalance: remainingBalance,
+	}, nil
+
 }
 
 func NewBalanceService(balanceRepo ports.BalanceRepo) ports.BalanceService {

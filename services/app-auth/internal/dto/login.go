@@ -20,6 +20,6 @@ type LoginInitResponseData struct {
 }
 
 type RefreshtokenRequest struct {
-	accessToken  *string `json:"access_token,omitempty" `
+	AccessToken  *string `json:"access_token,omitempty" `
 	RefreshToken string  `json:"refresh_token" `
 }

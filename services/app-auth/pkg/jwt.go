@@ -16,7 +16,7 @@ type authClaims struct {
 	UserID string `json:"userId"`
 }
 
-func generateToken(user entity.User) (string, error) {
+func GenerateJWTToken(user entity.User) (string, error) {
 	expiresAt := time.Now().Add(24 * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, authClaims{
 		StandardClaims: jwt.StandardClaims{
@@ -34,7 +34,7 @@ func generateToken(user entity.User) (string, error) {
 }
 
 // validateToken parses and validates the JWT token and returns the user ID and username if valid.
-func validateToken(tokenString string) (string, string, error) {
+func ValidateToken(tokenString string) (string, string, error) {
 	var claims authClaims
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

@@ -25,10 +25,11 @@ type Balance struct {
 }
 
 type Income struct {
-	IncomeID    int64        `json:"balanceID"`
-	UserID      int64        `json:"userID"`
-	Amount      *money.Money `json:"amount"`
-	Description string       `json:"description"`
-	Timestamp   string       `json:"timestamp"`
-	Version     int          `json:"version"`
+	IncomeID int64 `json:"balanceID"`
+	UserID   int64 `json:"userID"`
+	//Amount      *money.Money `json:"amount"`
+	Amount      float64 `json:"amount"`
+	Description string  `json:"description"`
+	Timestamp   string  `json:"timestamp"`
+	Version     int     `json:"version"`
 }

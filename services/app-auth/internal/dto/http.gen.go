@@ -4,10 +4,24 @@
 package dto
 
 import (
+	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"time"
 
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
+
+// CreateExpenseTypeRequest defines model for CreateExpenseTypeRequest.
+type CreateExpenseTypeRequest struct {
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+}
+
+// ExpenseTypeResponse defines model for ExpenseTypeResponse.
+type ExpenseTypeResponse struct {
+	Description   *string `json:"description,omitempty"`
+	ExpenseTypeId *int    `json:"expense_type_id,omitempty"`
+	Name          *string `json:"name,omitempty"`
+}
 
 // LoginRequest defines model for LoginRequest.
 type LoginRequest struct {
@@ -17,12 +31,29 @@ type LoginRequest struct {
 
 // LoginResponseData defines model for LoginResponseData.
 type LoginResponseData struct {
-	AccessToken           *string               `json:"access_token,omitempty"`
+	UserId                entity.User
+	*string               `json:"access_token,omitempty"`
 	AccessTokenExpiresAt  *time.Time            `json:"access_token_expires_at,omitempty"`
 	RefreshToken          *string               `json:"refresh_token,omitempty"`
 	RefreshTokenExpiresAt *time.Time            `json:"refresh_token_expires_at,omitempty"`
 	SessionId             *openapi_types.UUID   `json:"session_id,omitempty"`
 	User                  *RegisterResponseData `json:"user,omitempty"`
+}
+
+// LogoutResponse defines model for LogoutResponse.
+type LogoutResponse struct {
+	Message string `json:"message"`
+}
+
+// RefreshTokenRequest defines model for RefreshTokenRequest.
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+// RefreshTokenResponse defines model for RefreshTokenResponse.
+type RefreshTokenResponse struct {
+	AccessToken string `json:"access_token"`
+	ExpiresIn   string `json:"expires_in"`
 }
 
 // RegisterRequest defines model for RegisterRequest.
@@ -32,6 +63,8 @@ type RegisterRequest struct {
 	Password string              `json:"password"`
 	Username string              `json:"username"`
 }
+
+
 
 // RegisterResponseData defines model for RegisterResponseData.
 type RegisterResponseData struct {
@@ -48,29 +81,11 @@ type Response struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// CreateExpenseTypeJSONBody defines parameters for CreateExpenseType.
-type CreateExpenseTypeJSONBody struct {
-	Description *string `json:"description,omitempty"`
-	Name        string  `json:"name"`
-}
-
-// GetExpenseTypesParams defines parameters for GetExpenseTypes.
-type GetExpenseTypesParams struct {
-	// Page Page number for pagination.
-	Page *int `form:"page,omitempty" json:"page,omitempty"`
-
-	// PerPage Number of items per page.
-	PerPage *int `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
-// RefreshTokenParams defines parameters for RefreshToken.
-type RefreshTokenParams struct {
-	// RefreshToken Refresh token obtained during login.
-	RefreshToken string `form:"refresh_Token" json:"refresh_Token"`
-}
-
 // CreateExpenseTypeJSONRequestBody defines body for CreateExpenseType for application/json ContentType.
-type CreateExpenseTypeJSONRequestBody CreateExpenseTypeJSONBody
+type CreateExpenseTypeJSONRequestBody = CreateExpenseTypeRequest
+
+// RefreshTokenJSONRequestBody defines body for RefreshToken for application/json ContentType.
+type RefreshTokenJSONRequestBody = RefreshTokenRequest
 
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = LoginRequest

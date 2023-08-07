@@ -1,0 +1,11 @@
+
+project: billing_service
+
+providers:
+  aws_secretsmanager:
+    # env_sync:
+    #   path: ~/my-global-dot-env.env
+    env:
+      MAILGUN_KEY:
+        path: ~/my-global-dot-env.env
+

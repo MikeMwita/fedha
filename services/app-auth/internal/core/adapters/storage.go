@@ -4,15 +4,22 @@ import (
 	"context"
 	"github.com/MikeMwita/fedha-go-gen.grpc/generated_rpc_code/github.com/MikeMwita/fedha-go-gen.grpc/db"
 	"google.golang.org/grpc"
+	"time"
 )
 
 type DbStorage interface {
-	//methods for interacting with the database
-	CreateUser(ctx context.Context, in *db.RegUserReq, opts ...grpc.CallOption) (*db.RegUserRes, error)
+	RegisterUser(ctx context.Context, in *db.RegUserReq, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	UpdateUser(ctx context.Context, in *db.UpdateUserReq, opts ...grpc.CallOption) (*db.UpdateUserRes, error)
 	GetPagedUsers(ctx context.Context, in *db.GetPagedUsersReq, opts ...grpc.CallOption) (*db.GetPagedUsersRes, error)
 	GetUserByField(ctx context.Context, in *db.GetByfieldReq, opts ...grpc.CallOption) (*db.GetByfieldRes, error)
+	GetUserByUsername(ctx context.Context, in *db.GetUserByUsernameRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
+	GetUserByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
+	SaveUser(ctx context.Context, in *db.SaveUserRequest, opts ...grpc.CallOption) (*db.User, error)
 }
 
 type CacheStorage interface {
+	SetAccessToken(ctx context.Context, key string, value interface{}, expiration time.Duration) error
+	GetAccessToken(ctx context.Context, value interface{}) error
+	DeleteAccessToken(ctx context.Context, key string) error
+	DeleteSession(ctx context.Context, id string) error
 }
