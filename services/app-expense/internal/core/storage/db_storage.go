@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"github.com/MikeMwita/fedha-go-gen.grpc/generated_rpc_code/github.com/MikeMwita/fedha-go-gen.grpc/db"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/db"
 	"github.com/MikeMwita/fedha.git/services/app-expense/internal/core/ports"
 	"google.golang.org/grpc"
 )

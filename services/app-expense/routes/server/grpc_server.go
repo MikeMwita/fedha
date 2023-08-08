@@ -3,7 +3,7 @@ package server
 import (
 	"flag"
 	"fmt"
-	"github.com/MikeMwita/fedha-go-gen.grpc/generated_rpc_code/github.com/MikeMwita/fedha-go-gen.grpc/db"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/db"
 	"github.com/MikeMwita/fedha.git/services/app-expense/config"
 	"google.golang.org/grpc"
 	"log"
