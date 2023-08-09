@@ -33,7 +33,6 @@ func GenerateJWTToken(user entity.User) (string, error) {
 	return tokenString, nil
 }
 
-// validateToken parses and validates the JWT token and returns the user ID and username if valid.
 func ValidateToken(tokenString string) (string, string, error) {
 	var claims authClaims
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {

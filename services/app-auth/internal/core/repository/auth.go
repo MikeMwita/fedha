@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
-	"github.com/MikeMwita/fedha-go-gen.grpc/generated_rpc_code/github.com/MikeMwita/fedha-go-gen.grpc/db"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/db"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/service"
@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
-
 	"time"
 )
 

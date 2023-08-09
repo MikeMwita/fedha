@@ -2,7 +2,7 @@ package adapters
 
 import (
 	"context"
-	"github.com/MikeMwita/fedha-go-gen.grpc/generated_rpc_code/github.com/MikeMwita/fedha-go-gen.grpc/expense"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/expense"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
 	"github.com/gin-gonic/gin"

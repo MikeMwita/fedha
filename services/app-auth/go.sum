@@ -2,6 +2,8 @@ github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230727094556-4a42c1d9d1a8 h1:njf
 github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230727094556-4a42c1d9d1a8/go.mod h1:WcwUpoMGjfwa1v/Rn5b+0Awk6tP/z60vAMPr9M3nuKA=
 github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230804065954-7a7e019b1e54 h1:nRXC6MpvCgPScv/N5HsEtHjHd2nMmiCSHDrzCHh7s6Q=
 github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230804065954-7a7e019b1e54/go.mod h1:WcwUpoMGjfwa1v/Rn5b+0Awk6tP/z60vAMPr9M3nuKA=
+github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230808060443-f1f26e3c7627 h1:+7mKYoaHolQDywmEJpaey7DTdD+GcAkH14YODu6GRDM=
+github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230808060443-f1f26e3c7627/go.mod h1:WcwUpoMGjfwa1v/Rn5b+0Awk6tP/z60vAMPr9M3nuKA=
 github.com/RaveNoX/go-jsoncommentstrip v1.0.0/go.mod h1:78ihd09MekBnJnxpICcwzCMzGrKSKYe4AqU6PDYYpjk=
 github.com/apapsch/go-jsonmerge/v2 v2.0.0 h1:axGnT1gRIfimI7gJifB699GoE/oq+F2MU7Dml6nw9rQ=
 github.com/apapsch/go-jsonmerge/v2 v2.0.0/go.mod h1:lvDnEdqiQrp0O42VQGgmlKpxL1AP2+08jFMw88y4klk=

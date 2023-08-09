@@ -24,3 +24,10 @@ type DbStorage interface {
 	// MONTHLY SUMMARY
 	GenerateMonthlySummary(ctx context.Context, in *db.MonthlySummaryRequest, opts ...grpc.CallOption) (*db.MonthlySummaryResponse, error)
 }
+
+type DbService interface {
+	CreateExpense(context.Context, *db.ExpenseRequest) (*db.ExpenseResponse, error)
+	GetExpense(context.Context, *db.GetExpenseRequest) (*db.ExpenseResponse, error)
+	UpdateExpense(context.Context, *db.UpdateExpenseRequest) (*db.ExpenseResponse, error)
+	DeleteExpense(context.Context, *db.DeleteExpenseRequest) (*db.ExpenseResponse, error)
+}

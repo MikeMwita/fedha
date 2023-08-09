@@ -7,17 +7,17 @@ import (
 	"google.golang.org/grpc"
 )
 
-type MonthlyRepo struct {
+type MonthlyService struct {
 	monthly ports.IncomeRepository
 }
 
-func (m MonthlyRepo) GenerateMonthlySummary(ctx context.Context, in *db.MonthlySummaryRequest, opts ...grpc.CallOption) (*db.MonthlySummaryResponse, error) {
+func (m MonthlyService) GenerateMonthlySummary(ctx context.Context, in *db.MonthlySummaryRequest, opts ...grpc.CallOption) (*db.MonthlySummaryResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewMonthlyRepo(monthly ports.IncomeRepository) ports.MonthlyService {
-	return &MonthlyRepo{
+func NewMonthlyService(monthly ports.IncomeRepository) ports.MonthlyService {
+	return &MonthlyService{
 		monthly: monthly,
 	}
 }

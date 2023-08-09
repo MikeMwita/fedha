@@ -1,38 +1,84 @@
 package server
 
 import (
-	"flag"
-	"fmt"
-	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/db"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/expense"
 	"github.com/MikeMwita/fedha.git/services/app-expense/config"
+	"github.com/MikeMwita/fedha.git/services/app-expense/internal/core/repositories"
+	"github.com/MikeMwita/fedha.git/services/app-expense/internal/core/services"
+	"github.com/MikeMwita/fedha.git/services/app-expense/internal/core/storage"
+	"github.com/MikeMwita/fedha.git/services/app-expense/internal/platform"
+	"github.com/MikeMwita/fedha.git/services/app-expense/routes/handlers"
+	"github.com/labstack/gommon/log"
 	"google.golang.org/grpc"
-	"log"
 	"net"
-)
-
-var (
-	port = flag.Int("port", 50051, "gRPC server port")
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type Server struct {
-	db.UnimplementedDbServiceServer
-	config *config.Config
+	cfg config.Config
 }
 
-func main() {
-	fmt.Println("GRPC server listening")
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+func (s *Server) Run() {
+	log.Infof("DATABASE GRPC server initialising")
 
+	// create database client
+	postgresClient, err := platform.NewDBServiceClient(s.cfg.DB)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Panic("error:", err)
 	}
-	s := grpc.NewServer()
-	db.RegisterDbServiceServer(s, &Server{})
 
-	log.Printf("Server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+	// Create User storage
+	dbStorage := storage.NewDbStorage(postgresClient)
+
+	// create  repository
+	balanceRepo:=repositories.NewBalanceRepository(dbStorage)
+	expenseRepo:=repositories.NewExpenseRepository(dbStorage)
+	incomeRepo:=repositories.NewIncomeRepository(dbStorage)
+	monthly_summaryRepo:=repositories.NewMonthlyRepo(dbStorage)
+
+
+	balanceservice := services.NewExpenseService(balanceRepo)
+	expenseService := services.NewExpenseService(expenseRepo)
+	incomeService := services.NewIncomeService(incomeRepo)
+	monthly_summaryService := services.NewMonthlyService(monthly_summaryRepo)
+
+
+
+	// create handler
+	grpcHandler := handlers.NewHandler(balanceservice,expenseService,incomeService,monthly_summaryService
+
+	// run server
+	lis, err := net.Listen("tcp", ":"+s.cfg.Server.Port)
+	if err != nil {
+		log.Fatal(err)
+		return
 	}
-	fmt.Println("GRPC server stopped")
 
+	grpcServer := grpc.NewServer()
+	expense.RegisterExpenseServiceServer(grpcServer, grpcHandler)
+
+	// Run the server
+
+	// wait for interrupt signal to gracefully shutdown the server with
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		err = grpcServer.Serve(lis)
+		if err != nil {
+			log.Fatal("cannot start apps server:", err)
+			return
+		}
+	}()
+
+	<-quit
+
+}
+
+func NewServer(cfg config.Config) *Server {
+	return &Server{
+		cfg: cfg,
+	}
 }

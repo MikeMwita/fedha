@@ -2,17 +2,13 @@ package handlers
 
 import (
 	"context"
-	"errors"
+
 
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/service"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
 	"github.com/gin-gonic/gin"
 	"net/http"
-)
-
-var (
-	ErrUserNotFound = errors.New("username already taken")
 )
 
 type Handler struct {
@@ -98,9 +94,8 @@ func (h Handler) Login(c *gin.Context) {
 
 func (h Handler) GetUserById(c *gin.Context, userId string) {
 	// Get the user from the database
-	user, err := h.AuthUC.GetUserById(c, userId)
+	_, err := h.AuthUC.GetUserById(c, userId)
 	if err != nil {
-		if err == adapters.ErrUserNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
@@ -109,7 +104,7 @@ func (h Handler) GetUserById(c *gin.Context, userId string) {
 		return
 	}
 
-	// Return the user
+	// Return the user data
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
