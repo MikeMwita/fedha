@@ -15,7 +15,7 @@ import (
 type ServerInterface interface {
 	// Create a new expense type
 	// (POST /api/v1/expense_type)
-	CreateExpenseType(c *gin.Context)
+
 	// Logout user
 	// (DELETE /api/v1/logout)
 	UserLogout(c *gin.Context)

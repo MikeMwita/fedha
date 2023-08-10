@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"context"
-
-
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/service"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
@@ -14,11 +12,6 @@ import (
 type Handler struct {
 	AuthUC         adapters.AuthUseCase
 	SessionService service.DefaultSessionService
-}
-
-func (h Handler) CreateExpenseType(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
 }
 
 func (h Handler) Register(c *gin.Context) {
@@ -51,19 +44,18 @@ func (h Handler) UserLogout(c *gin.Context) {
 		return
 	}
 
-	// Return the success message
 	c.JSON(http.StatusOK, gin.H{"message": "User logged out successfully"})
 }
 
 func (h Handler) RefreshToken(c *gin.Context) {
-	// Get the refresh token from the request
-	var refreshToken string
+
+	var refreshToken dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&refreshToken); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	// Refresh the token
-	refreshTokenResponse, err := h.AuthUC.RefreshToken(context.Background(), RefreshTokenRequest.RefreshToken)
+	refreshTokenResponse, err := h.AuthUC.RefreshToken(c, refreshToken)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -94,17 +86,12 @@ func (h Handler) Login(c *gin.Context) {
 
 func (h Handler) GetUserById(c *gin.Context, userId string) {
 	// Get the user from the database
-	_, err := h.AuthUC.GetUserById(c, userId)
+	user, err := h.AuthUC.GetUserById(c, userId)
 	if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Return the user data
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
