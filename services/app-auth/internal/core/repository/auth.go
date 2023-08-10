@@ -19,12 +19,22 @@ type authRepo struct {
 	cacheStorage adapters.CacheStorage
 }
 
-func (a authRepo) GetAccessToken(ctx context.Context, value interface{}) error {
+func (a authRepo) GetUserById(c *gin.Context, userId string) (string, error) {
+	user, err := a.dbStorage.GetUserByID(c, userId)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "user not found"})
+		return "", nil
+	}
+
+	c.JSON(200, user)
+}
+
+func (a authRepo) Save(ctx interface{}, user entity.User) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (a authRepo) Save(ctx interface{}, user entity.User) error {
+func (a authRepo) GetAccessToken(ctx context.Context, value interface{}) error {
 	//TODO implement me
 	panic("implement me")
 }
@@ -91,22 +101,8 @@ func (a authRepo) Login(ctx context.Context, loginReq dto.LoginRequest) (*dto.Lo
 	if err != nil {
 		return nil, errors.New("invalid username")
 	}
-	// Compare the password
-	//if !bcrypt.CompareHashAndPassword([]byte(user.Hash), []byte(LoginRequest.Password)) {
-	//	return nil, errors.New("invalid password")
-	//}
 	return user, nil
 
-}
-
-func (a authRepo) GetUserById(c *gin.Context, userId string) {
-	user, err := a.dbStorage.GetUserByID(c, userId)
-	if err != nil {
-		c.JSON(404, gin.H{"error": "user not found"})
-		return
-	}
-
-	c.JSON(200, user)
 }
 
 func (a authRepo) UpdateUser(ctx context.Context, user entity.User) (*entity.User, error) {
