@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/db"
 	"github.com/MikeMwita/fedha.git/services/app-auth/config"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
@@ -23,25 +24,20 @@ type AuthService struct {
 }
 
 func (a AuthService) GetUserById(c *gin.Context, userId string) {
-
-	// Get the user from the database
-	user, err := a.repo.GetUserById(c, userId)
+	req := &db.GetUserByIDRequest{
+		UserId: userId,
+	}
+	user, err := a.repo.GetUserByID(c, req)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "user not found"})
 		return
 	}
-	// Assign the returned object to a variable
 	u := user
-
-	// Use the variable
 	c.JSON(200, u)
 }
 
 func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.RegisterRes, error) {
-	// Get the context from the Gin request
-
 	//ctx := c.Request.Context()
-	//validate register request
 	var req dto.RegisterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 	}
@@ -51,22 +47,14 @@ func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.R
 		UserName: request.FullName,
 		Hash:     request.Password,
 	}
-
 	if err := a.ValidateUser(user); err != nil {
 		return nil, err
 	}
 	// Check if the username is already taken
-	if err := a.repo.FindByUsername(ctx, request.Username); err == nil {
+	if err, _ := a.repo.FindByUsername(ctx, request.Username); err == nil {
 		return nil, ErrUsernameTaken
 	}
 
-	// Save the user
-	err := a.repo.Save(ctx, user)
-	if err != nil {
-		return nil, err
-	}
-
-	// Return the register response data
 	return &dto.RegisterRes{
 		CreatedAt:         user.CreatedAt,
 		Email:             user.Email,
@@ -106,7 +94,6 @@ func (a AuthService) Login(request dto.LoginInitRequest) (*dto.LoginInitResponse
 	}, nil
 
 }
-
 func (a AuthService) ValidateLoginRequest(request dto.LoginInitRequest) error {
 	if request.Username == "" {
 		return ErrEmptyUsername
@@ -199,6 +186,6 @@ func (a AuthService) UserLogout(userUUID string) error {
 	return nil
 }
 
-//func NewAuthService(repo adapters.AuthRepo) adapters.AuthService {
-//	return &AuthService{repo: repo}
-//}
+func NewAuthService(repo adapters.AuthRepo) adapters.AuthService {
+	return &AuthService{repo: repo}
+}

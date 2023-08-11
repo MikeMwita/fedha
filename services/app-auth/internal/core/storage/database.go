@@ -98,6 +98,12 @@ func (d dbStorage) SaveUser(ctx context.Context, in *db.SaveUserRequest, opts ..
 	}
 	return d.dbClient.SaveUser(ctx, in, opts...)
 }
+func (d dbStorage) FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error) {
+	if d.dbClient == nil {
+		return nil, ErrDbDown
+	}
+	return d.dbClient.GetUserByUsername(ctx, &db.GetUserByUsernameRequest{Username: username})
+}
 
 func NewDbStorage(serviceCfg config.DatabaseService) (adapters.DbStorage, error) {
 	client, err := apps.NewDBServiceClient(serviceCfg)

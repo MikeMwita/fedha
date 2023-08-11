@@ -8,8 +8,10 @@ import (
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/service"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
+	"github.com/MikeMwita/fedha.git/services/app-auth/pkg/validation"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc"
 	"math/rand"
 	"time"
 )
@@ -19,29 +21,88 @@ type authRepo struct {
 	cacheStorage adapters.CacheStorage
 }
 
-func (a authRepo) GetUserById(c *gin.Context, userId string) (string, error) {
-	user, err := a.dbStorage.GetUserByID(c, userId)
+func (a authRepo) SetAccessToken(ctx context.Context, key string, value string, expiration time.Duration) error {
+	// Validate the key
+	if key == "" {
+		return errors.New("key cannot be empty")
+	}
+	if len(value) == 0 {
+		return errors.New("value cannot be nil")
+	}
+	err := a.cacheStorage.SetAccessToken(ctx, key, value, expiration)
 	if err != nil {
-		c.JSON(404, gin.H{"error": "user not found"})
-		return "", nil
+		return err
 	}
 
-	c.JSON(200, user)
+	return nil
 }
 
-func (a authRepo) Save(ctx interface{}, user entity.User) error {
-	//TODO implement me
-	panic("implement me")
+func (a authRepo) GetAccessToken(ctx context.Context, value string) (string, error) {
+	token, err := a.cacheStorage.GetAccessToken(ctx, value)
+	if err != nil {
+		return "", err
+	}
+	tokenExpiration := time.Now().Add(24 * time.Hour)
+	if token != "" && time.Now().After(tokenExpiration) {
+		// delete expired token
+		err = a.cacheStorage.DeleteAccessToken(ctx, value)
+		if err != nil {
+			return "", err
+		}
+		token = ""
+	}
+	return token, nil
 }
 
-func (a authRepo) GetAccessToken(ctx context.Context, value interface{}) error {
-	//TODO implement me
-	panic("implement me")
+func (a authRepo) FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error) {
+	//req object
+	request := &db.GetUserByUsernameRequest{
+		Username: username,
+	}
+
+	user, err := a.dbStorage.GetUserByUsername(ctx, request)
+	if err != nil {
+		return user, err
+	}
+
+	// Return the user
+	return user, nil
+}
+
+func (a authRepo) SaveUser(ctx context.Context, in *db.SaveUserRequest, opts ...grpc.CallOption) (*db.User, error) {
+	// Validate  input request
+	if in == nil || in.User == nil {
+		return nil, errors.New("invalid request")
+	}
+	// Hash the password
+	hashedPassword, err := hashPassword(in.User.Hash)
+	if err != nil {
+		return nil, err
+	}
+	// Set hashed password on the user object
+	in.User.Hash = hashedPassword
+
+	user, err := a.dbStorage.SaveUser(ctx, in, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return user, err
 }
 
 func (a authRepo) VerifyRefreshToken(token string) error {
-	//TODO implement me
-	panic("implement me")
+	return errors.New("not implemented")
+}
+
+func (a authRepo) GetUserByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error) {
+	// Validate input request
+	if in == nil || in.UserId == "" {
+		return nil, errors.New("invalid request")
+	}
+	user, err := a.dbStorage.GetUserByID(ctx, in, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (a authRepo) InvalidateSession() error {
@@ -97,12 +158,24 @@ func hashPassword(password string) (string, error) {
 
 func (a authRepo) Login(ctx context.Context, loginReq dto.LoginRequest) (*dto.LoginResponseData, error) {
 	// Find the user by username
-	user, err := a.dbStorage.GetUserByUsername(ctx, loginReq.Username)
+	_, err := a.dbStorage.GetUserByUsername(ctx, &db.GetUserByUsernameRequest{Username: loginReq.Username})
 	if err != nil {
 		return nil, errors.New("invalid username")
 	}
-	return user, nil
 
+	//loginReq := dto.LoginRequest{
+	//	Username: loginReq.Username,
+	//	Password: loginReq.Password,
+	//}
+	err = validation.ValidateLogin(ctx, dto.LoginInitRequest(loginReq))
+	if err != nil {
+		return nil, err
+	}
+
+	// Return the login response data
+	return &dto.LoginResponseData{
+		//User: user,
+	}, nil
 }
 
 func (a authRepo) UpdateUser(ctx context.Context, user entity.User) (*entity.User, error) {
@@ -140,35 +213,8 @@ func (a authRepo) UserLogout(c *gin.Context) {
 		return
 	}
 
-	// Invalidate the user's session
-	c.SetCookie("session_id", "", -1, "/", "", false, true)
-
 	// Return a success message
 	c.JSON(200, gin.H{"message": "Successfully logged out"})
-}
-func (a authRepo) SetAccessToken(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	// Validate the key
-	if key == "" {
-		return errors.New("key cannot be empty")
-	}
-
-	// Validate the value
-	if value == nil {
-		return errors.New("value cannot be nil")
-	}
-
-	// Set the expiration time
-	if expiration <= 0 {
-		expiration = time.Hour * 24
-	}
-
-	// Set the token in the cache
-	err := a.cacheStorage.SetAccessToken(ctx, key, value, expiration)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (a authRepo) DeleteAccessToken(ctx context.Context, key string) error {
@@ -199,48 +245,6 @@ func (a authRepo) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*d
 		//ExpiresIn:  time.Now().Add(time.Hour * 24),
 
 	}, nil
-}
-
-func (a authRepo) FindByUsername(ctx interface{}, username interface{}) interface{} {
-	// Get the username
-	usernameStr, ok := username.(string)
-	if !ok {
-		return nil
-	}
-
-	// Find the user by username
-	user, err := a.dbStorage.GetUserByUsername(ctx, usernameStr)
-	if err != nil {
-		return nil
-	}
-
-	// Return the user
-	return user
-}
-
-func (a authRepo) SaveUser(ctx interface{}, user *entity.User) interface{} {
-	// Validate the user
-	if user.UserId == "" {
-		return nil
-	}
-
-	// Hash the password
-	hashedPassword, err := hashPassword(user.Password)
-	if err != nil {
-		return nil
-	}
-
-	// Set the hashed password on the user
-	user.PasswordHash = hashedPassword
-
-	// Save the user in the database
-	_, err = a.dbStorage.SaveUser(ctx, user)
-	if err != nil {
-		return nil
-	}
-
-	// Return the user
-	return user
 }
 
 func generateRandomString(length int) string {

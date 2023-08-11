@@ -3,16 +3,27 @@ package repository
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 type AuthRedisRepository struct {
 	client *redis.Client
 }
 
+func (r *AuthRedisRepository) SetAccessToken(ctx context.Context, key string, value string, expiration time.Duration) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *AuthRedisRepository) DeleteSession(ctx context.Context, id string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewAuthRedisRepository(host string) *AuthRedisRepository {
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})

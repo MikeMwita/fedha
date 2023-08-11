@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+const (
+	BearerScopes = "Bearer.Scopes"
+)
+
 type Handler struct {
 	AuthUC         adapters.AuthUseCase
 	SessionService service.DefaultSessionService
@@ -95,6 +99,10 @@ func (h Handler) GetUserById(c *gin.Context, userId string) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
+func (h Handler) CreateExpenseType(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
 func NewHandler(authUC adapters.AuthUseCase) ServerInterface {
 	return &Handler{
 		AuthUC: authUC,

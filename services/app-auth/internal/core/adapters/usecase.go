@@ -9,12 +9,15 @@ import (
 )
 
 type AuthUseCase interface {
-	Register(ctx context.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error)
-	Login(ctx context.Context, data dto.LoginRequest) (*dto.LoginResponseData, error)
+	Login(c *gin.Context, data dto.LoginRequest) (*dto.LoginResponseData, error)
+	Register(c *gin.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error)
+	//Register(ctx context.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error)
+	//Login(ctx context.Context, data dto.LoginRequest) (*dto.LoginResponseData, error)
 	GetUserById(c *gin.Context, userId string) (string, error)
 	RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
 	UpdateUser(ctx context.Context, user entity.User) (*entity.User, error)
 	UserLogout(c *gin.Context)
+	VerifyAccessToken(token string) (interface{}, interface{})
 
 	//grpc
 	//RegisterUser(context.Context, *RegUserReq) (*RegUserRes, error)

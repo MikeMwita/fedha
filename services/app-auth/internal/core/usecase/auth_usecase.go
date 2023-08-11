@@ -13,26 +13,26 @@ type AuthUsecase struct {
 	sessionService adapters.SessionService
 }
 
-func (a AuthUsecase) GetUserById(c *gin.Context, userId string) (string, error) {
+func (a AuthUsecase) Login(c *gin.Context, data dto.LoginRequest) (*dto.LoginResponseData, error) {
+	//validate password
+	res, err := a.authService.Login(c, data.Username, data.Password)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (a AuthUsecase) Register(c *gin.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error) {
+	res, err := a.authService.Register(c, dto.RegisterReq(data))
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (a AuthUsecase) VerifyAccessToken(token string) (interface{}, interface{}) {
 	//TODO implement me
 	panic("implement me")
-}
-
-func (a AuthUsecase) Register(ctx context.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error) {
-
-	res, err := a.authService.Register(data)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-func (a AuthUsecase) Login(ctx context.Context, data dto.LoginRequest) (*dto.LoginResponseData, error) {
-	res, err := a.authService.Login(data)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
 }
 
 func (a AuthUsecase) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
@@ -53,6 +53,11 @@ func (a AuthUsecase) UpdateUser(ctx context.Context, user entity.User) (*entity.
 
 func (a AuthUsecase) UserLogout(c *gin.Context) {
 
+}
+
+func (a AuthUsecase) GetUserById(c *gin.Context, userId string) (string, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func NewAuthUsecase(as adapters.AuthService, ss adapters.SessionService) adapters.AuthUseCase {
