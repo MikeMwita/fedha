@@ -77,12 +77,6 @@ func (a AuthService) Login(request dto.LoginInitRequest) (*dto.LoginInitResponse
 		return nil, err
 	}
 
-	// Compare the password
-	//if !bcrypt.CompareHashAndPassword([]byte(user.Hash), []byte(LoginRequest.Password)) {
-	//	return nil, errors.New("invalid password")
-	//}
-
-	// Generate a JWT token
 	token, err := pkg.GenerateJWTToken(user.UserId)
 	if err != nil {
 		return nil, err

@@ -27,7 +27,7 @@ func (h Handler) Register(c *gin.Context) {
 	}
 
 	// Register the user
-	registerResponse, err := h.AuthUC.Register(context.Background(), data)
+	registerResponse, err := h.AuthUC.Register(c, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -76,9 +76,8 @@ func (h Handler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	// Login the user
-	loginResponse, err := h.AuthUC.Login(context.Background(), data)
+	loginResponse, err := h.AuthUC.Login(c, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

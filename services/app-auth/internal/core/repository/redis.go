@@ -11,25 +11,11 @@ type AuthRedisRepository struct {
 }
 
 func (r *AuthRedisRepository) SetAccessToken(ctx context.Context, key string, value string, expiration time.Duration) error {
-	//TODO implement me
-	panic("implement me")
+	return r.client.Set(ctx, key, value, expiration).Err()
 }
 
 func (r *AuthRedisRepository) DeleteSession(ctx context.Context, id string) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func NewAuthRedisRepository(host string) *AuthRedisRepository {
-
-	client := redis.NewClient(&redis.Options{
-		Addr:     "",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	return &AuthRedisRepository{
-		client: client,
-	}
+	return r.client.Del(ctx, id).Err()
 }
 
 func (r *AuthRedisRepository) SaveAccessToken(ctx context.Context, userID, accessToken string) error {
@@ -42,4 +28,16 @@ func (r *AuthRedisRepository) GetAccessToken(ctx context.Context, userID string)
 
 func (r *AuthRedisRepository) DeleteAccessToken(ctx context.Context, userID string) error {
 	return r.client.Del(ctx, userID).Err()
+}
+
+func NewAuthRedisRepository(host string) *AuthRedisRepository {
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     "",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	return &AuthRedisRepository{
+		client: client,
+	}
 }

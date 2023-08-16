@@ -5,8 +5,6 @@ import (
 	"os"
 )
 
-//we will be implementing Redis||JWT||Db
-
 type Database struct {
 	Host     string
 	Port     string

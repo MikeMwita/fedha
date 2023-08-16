@@ -14,8 +14,7 @@ type AuthUsecase struct {
 }
 
 func (a AuthUsecase) Login(c *gin.Context, data dto.LoginRequest) (*dto.LoginResponseData, error) {
-	//validate password
-	res, err := a.authService.Login(c, data.Username, data.Password)
+	res, err := a.authService.Login(data)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +22,7 @@ func (a AuthUsecase) Login(c *gin.Context, data dto.LoginRequest) (*dto.LoginRes
 }
 
 func (a AuthUsecase) Register(c *gin.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error) {
-	res, err := a.authService.Register(c, dto.RegisterReq(data))
+	res, err := a.authService.Register(c, data)
 	if err != nil {
 		return nil, err
 	}
