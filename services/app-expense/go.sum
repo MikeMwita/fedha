@@ -1,5 +1,7 @@
 github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230808060443-f1f26e3c7627 h1:+7mKYoaHolQDywmEJpaey7DTdD+GcAkH14YODu6GRDM=
 github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230808060443-f1f26e3c7627/go.mod h1:WcwUpoMGjfwa1v/Rn5b+0Awk6tP/z60vAMPr9M3nuKA=
+github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230821132058-9bccd06a15aa h1:w1Kxo00i0l1AlNB5ghqaOjTz9lRe32ypD80env71OuM=
+github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230821132058-9bccd06a15aa/go.mod h1:WcwUpoMGjfwa1v/Rn5b+0Awk6tP/z60vAMPr9M3nuKA=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
