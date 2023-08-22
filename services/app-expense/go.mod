@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230821132058-9bccd06a15aa // indirect
+	github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230822083349-462318988b17 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
