@@ -29,11 +29,6 @@ func (a AuthUsecase) Register(c *gin.Context, data dto.RegisterRequest) (*dto.Re
 	return res, nil
 }
 
-func (a AuthUsecase) VerifyAccessToken(token string) (interface{}, interface{}) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (a AuthUsecase) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
 	res, err := a.authService.RefreshToken(data)
 	if err != nil {
@@ -49,12 +44,18 @@ func (a AuthUsecase) UpdateUser(ctx context.Context, user entity.User) (*entity.
 	}
 	return res, nil
 }
-
-func (a AuthUsecase) UserLogout(c *gin.Context) {
-
+func (a AuthUsecase) GetUserById(c *gin.Context, id string) (*entity.User, error) {
+	user, err := a.authService.GetUserById(c, id)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
-func (a AuthUsecase) GetUserById(c *gin.Context, userId string) (string, error) {
+func (a AuthUsecase) UserLogout(c *gin.Context) {
+}
+
+func (a AuthUsecase) VerifyAccessToken(token string) (interface{}, interface{}) {
 	//TODO implement me
 	panic("implement me")
 }
