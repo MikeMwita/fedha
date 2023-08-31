@@ -17,17 +17,12 @@ func (e ExpenseRepository) CreateIncome(ctx context.Context, in *db.CreateIncome
 		Amount: in.Amount,
 		Date:   in.Date,
 	}
-	// Save the income record to the database.
 	_, err := e.dbStorage.CreateIncome(ctx, income)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a new `CreateIncomeResponse` object.
-	createIncomeResponse := &db.CreateIncomeResponse{
-		//IncomeId: incomeid,
-
-	}
+	createIncomeResponse := &db.CreateIncomeResponse{}
 
 	return createIncomeResponse, nil
 }
@@ -56,54 +51,41 @@ func (e ExpenseRepository) DeleteIncome(ctx context.Context, in *db.DeleteIncome
 	return incomeDelete, nil
 }
 
-func (e ExpenseRepository) CreateExpense(ctx context.Context, in *db.ExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
-	// Create a new expense record.
-	expense := &db.ExpenseRequest{
-		Title:    in.Title,
-		Amount:   in.Amount,
-		Category: in.Category,
-		Date:     in.Date,
+func (e ExpenseRepository) CreateExpense(ctx context.Context, in *db.CreateExpenseRequest, opts ...grpc.CallOption) (*db.CreateExpenseResponse, error) {
+
+	expense := &db.Expense{
+		ExpenseId: in.Expense.ExpenseId,
+		Title:     in.Expense.Title,
+		Amount:    in.Expense.Amount,
+		Category:  in.Expense.Category,
+		Date:      in.Expense.Date,
 	}
 
-	// Save the expense record to the database.
-	_, err := e.dbStorage.CreateExpense(ctx, expense)
+	expenseRequest := &db.CreateExpenseRequest{
+		Expense: expense,
+	}
+	_, err := e.dbStorage.CreateExpense(ctx, expenseRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a new `ExpenseResponse` object.
-
-	expenseResponse := &db.ExpenseResponse{
-		//ExpenseId: expenseId,
-		Title:    expense.Title,
-		Amount:   expense.Amount,
-		Category: expense.Category,
-		Date:     expense.Date,
+	expenseResponse := &db.CreateExpenseResponse{
+		Expense: expense,
 	}
-
 	return expenseResponse, nil
 }
 
-func (e ExpenseRepository) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
-	// Get the expense record from the database.
-	expense, err := e.dbStorage.GetExpense(ctx, in)
+func (e ExpenseRepository) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.GetExpenseResponse, error) {
+	expenseResponse, err := e.dbStorage.GetExpense(ctx, in)
 	if err != nil {
 		return nil, err
 	}
-
-	// Create a new `ExpenseResponse` object.
-	expenseResponse := &db.ExpenseResponse{
-		ExpenseId: expense.ExpenseId,
-		Title:     expense.Title,
-		Amount:    expense.Amount,
-		Category:  expense.Category,
-		Date:      expense.Date,
-	}
-
+	expense := expenseResponse.Expense
+	expenseResponse.Expense = expense
 	return expenseResponse, nil
 }
 
-func (e ExpenseRepository) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (e ExpenseRepository) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.UpdateExpenseResponse, error) {
 	expenseUpdate, err := e.dbStorage.UpdateExpense(ctx, in)
 	if err != nil {
 		return nil, err
