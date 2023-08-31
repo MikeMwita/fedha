@@ -14,12 +14,6 @@ migrateup:
 migratedown:
 	migrate --path db/migration -database "postgresql://root:secret@localhost:5432/expenseapp?sslmode=disable" -verbose down
 
-#proto:
-#	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-#	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-#	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-#    protos/*.proto
-
 
 proto:
 	mkdir -p docs/protos/google/pb
@@ -29,7 +23,6 @@ proto:
 		   --go-grpc_out=docs/protos/google/pb --go-grpc_opt=paths=source_relative \
 		   --grpc-gateway_out=docs/protos/google/pb_gateway --grpc-gateway_opt=paths=source_relative \
 		   docs/protos/google/proto/*.proto
-
 
 
 #docker exec -it postgres13  createdb --username=root --owner=root fedhaapp

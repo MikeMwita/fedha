@@ -15,5 +15,3 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 }
-
-//urlExample := "postgres://username:password@localhost:5432/database_name"
