@@ -12,7 +12,7 @@ type AuthService interface {
 	RefreshToken(request dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
 	UpdateUser(user entity.User) (*entity.User, error)
 	UserLogout(userUUID string) error
-	GetUserById(c *gin.Context, userId string)
+	GetUserById(c *gin.Context, id string) (*entity.User, error)
 }
 
 type SessionService interface {

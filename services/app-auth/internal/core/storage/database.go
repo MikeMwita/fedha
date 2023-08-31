@@ -27,7 +27,6 @@ func (d dbStorage) RegisterUser(ctx context.Context, in *db.RegUserReq, opts ...
 	if d.dbClient == nil {
 		return nil, ErrDbDown
 	}
-	// retry logic
 	err := Retry(ctx, func() error {
 		_, err := d.dbClient.RegisterUser(ctx, in, opts...)
 		if err != nil {

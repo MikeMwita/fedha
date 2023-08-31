@@ -23,25 +23,22 @@ type AuthService struct {
 	config config.Jwt
 }
 
-func (a AuthService) GetUserById(c *gin.Context, userId string) {
+func (a AuthService) GetUserById(c *gin.Context, id string) (*entity.User, error) {
 	req := &db.GetUserByIDRequest{
-		UserId: userId,
+		UserId: id,
 	}
-	user, err := a.repo.GetUserByID(c, req)
+	_, err := a.repo.GetUserByID(c, req)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "user not found"})
-		return
+		return nil, err
 	}
-	u := user
-	c.JSON(200, u)
+	return nil, err
 }
 
-func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.RegisterRes, error) {
-	//ctx := c.Request.Context()
+func (a AuthService) Register(ctx *gin.Context, request dto.RegisterRequest) (*dto.RegisterResponseData, error) {
 	var req dto.RegisterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 	}
-	// Create a new user
 	user := entity.User{
 		Email:    string(request.Email),
 		UserName: request.FullName,
@@ -50,43 +47,27 @@ func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.R
 	if err := a.ValidateUser(user); err != nil {
 		return nil, err
 	}
-	// Check if the username is already taken
 	if err, _ := a.repo.FindByUsername(ctx, request.Username); err == nil {
 		return nil, ErrUsernameTaken
 	}
 
-	return &dto.RegisterRes{
-		CreatedAt:         user.CreatedAt,
-		Email:             user.Email,
-		FullName:          user.FullName,
-		PasswordChangedAt: user.PasswordChangedAt,
-		Username:          user.UserName,
-	}, nil
-
+	return nil, nil
 }
 
-func (a AuthService) Login(request dto.LoginInitRequest) (*dto.LoginInitResponseData, error) {
-	// Validate the login request
-	if err := a.ValidateLoginRequest(request); err != nil {
+func (a AuthService) Login(request dto.LoginRequest) (*dto.LoginResponseData, error) {
+	if err := a.ValidateLoginRequest(dto.LoginInitRequest(request)); err != nil {
 		return nil, err
 	}
-
-	// Get the user from the repository
 	user, err := a.repo.Login(context.Background(), dto.LoginRequest(request))
 	if err != nil {
 		return nil, err
 	}
-
-	token, err := pkg.GenerateJWTToken(user.UserId)
+	_, err = pkg.GenerateJWTToken(user.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	// Return the login response data
-	return &dto.LoginInitResponseData{
-		AccessToken: &token,
-	}, nil
-
+	return &dto.LoginResponseData{}, nil
 }
 func (a AuthService) ValidateLoginRequest(request dto.LoginInitRequest) error {
 	if request.Username == "" {
@@ -101,17 +82,12 @@ func (a AuthService) ValidateLoginRequest(request dto.LoginInitRequest) error {
 }
 
 func (a AuthService) RefreshToken(request dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
-	// Validate the refresh token request
 	if err := a.validateRefreshTokenRequest(request); err != nil {
 		return nil, err
 	}
-
-	// Verify the refresh token
 	if err := a.repo.VerifyRefreshToken(request.RefreshToken); err != nil {
 		return nil, err
 	}
-
-	// Generate a new JWT token
 	user := entity.User{
 		UserId: request.RefreshToken,
 	}
@@ -120,7 +96,6 @@ func (a AuthService) RefreshToken(request dto.RefreshTokenRequest) (*dto.Refresh
 		return nil, err
 	}
 
-	// Return the refresh token response data
 	return &dto.RefreshTokenResponse{
 		AccessToken: token,
 	}, nil
@@ -130,23 +105,17 @@ func (a AuthService) validateRefreshTokenRequest(request dto.RefreshTokenRequest
 	if request.RefreshToken == "" {
 		return errors.New("refresh token cannot be empty")
 	}
-
 	return nil
 }
 
 func (a AuthService) UpdateUser(user entity.User) (*entity.User, error) {
-	// Validate the user
 	if err := a.ValidateUser(user); err != nil {
 		return nil, err
 	}
-
-	// Update the user in the database
 	err, _ := a.repo.UpdateUser(context.Background(), user)
 	if err != nil {
 		return nil, errors.New("User not updated")
 	}
-
-	// Return the updated user
 	return &user, nil
 }
 
@@ -154,11 +123,9 @@ func (a AuthService) ValidateUser(user entity.User) error {
 	if user.UserId == "" {
 		return errors.New("user ID cannot be empty")
 	}
-
 	if user.UserName == "" {
 		return errors.New("username cannot be empty")
 	}
-
 	if user.Email == "" {
 		return errors.New("email cannot be empty")
 	}
@@ -171,7 +138,6 @@ func (a AuthService) ValidateUser(user entity.User) error {
 }
 
 func (a AuthService) UserLogout(userUUID string) error {
-	// Delete the user's JWT token
 	err := a.repo.DeleteAccessToken(context.Background(), userUUID)
 	if err != nil {
 		return err

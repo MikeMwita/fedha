@@ -25,7 +25,6 @@ type SessionRecord struct {
 }
 
 func (d DefaultSessionService) ClearSession(background context.Context, id string) error {
-	// Get the session record for the user ID
 	sessionRecord := &SessionRecord{UserId: id}
 	err := d.repo.DeleteSession(background, sessionRecord)
 	if err != nil {

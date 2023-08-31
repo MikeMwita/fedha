@@ -3,7 +3,7 @@ module github.com/MikeMwita/fedha.git/services/app-auth
 go 1.21rc2
 
 require (
-	github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230808060443-f1f26e3c7627
+	github.com/MikeMwita/fedha-go-gen.grpc v0.0.0-20230822083349-462318988b17
 	github.com/deepmap/oapi-codegen v1.13.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.14.0

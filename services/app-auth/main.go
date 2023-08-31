@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-	// Load config
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Loading config failed", err)
@@ -24,7 +23,6 @@ func main() {
 		Port: cfg.Database.Port,
 		Host: cfg.Database.Host,
 	}
-
 	dbStorage, err := storage.NewDbStorage(dbService)
 	if err != nil {
 		log.Error(err)
@@ -33,7 +31,6 @@ func main() {
 	cacheStorage := repository.NewAuthRedisRepository("")
 
 	authRepo := repository.NewAuthRepo(dbStorage, cacheStorage)
-
 	// services
 	authService := service.NewAuthService(authRepo)
 

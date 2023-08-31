@@ -83,12 +83,10 @@ func (h Handler) Login(c *gin.Context) {
 		return
 	}
 
-	// Return the login response data
 	c.JSON(http.StatusOK, gin.H{"data": loginResponse})
 }
 
 func (h Handler) GetUserById(c *gin.Context, userId string) {
-	// Get the user from the database
 	user, err := h.AuthUC.GetUserById(c, userId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

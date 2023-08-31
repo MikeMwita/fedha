@@ -55,7 +55,6 @@ func (a authRepo) GetAccessToken(ctx context.Context, value string) (string, err
 }
 
 func (a authRepo) FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error) {
-	//req object
 	request := &db.GetUserByUsernameRequest{
 		Username: username,
 	}
@@ -63,7 +62,6 @@ func (a authRepo) FindByUsername(ctx context.Context, username string) (*db.RegU
 	if err != nil {
 		return user, err
 	}
-	// Return the user
 	return user, nil
 }
 
@@ -205,8 +203,6 @@ func (a authRepo) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*d
 	accessToken := "accessToken"
 	return &dto.RefreshTokenResponse{
 		AccessToken: accessToken,
-		//ExpiresIn:  time.Now().Add(time.Hour * 24),
-
 	}, nil
 }
 
