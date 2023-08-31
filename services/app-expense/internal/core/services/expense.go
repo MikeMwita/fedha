@@ -11,37 +11,40 @@ type ExpenseService struct {
 	expenseRepository ports.ExpenseRepository
 }
 
-func (e ExpenseService) CreateExpense(ctx context.Context, in *db.ExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (e ExpenseService) CreateExpense(ctx context.Context, in *db.CreateExpenseRequest, opts ...grpc.CallOption) (*db.CreateExpenseResponse, error) {
 	expenseId, err := e.expenseRepository.CreateExpense(ctx, in)
 	if err != nil {
 		return nil, err
 	}
-
-	return &db.ExpenseResponse{
-		ExpenseId: expenseId.String(),
-		Title:     in.Title,
-		Amount:    in.Amount,
-		Category:  in.Category,
-		Date:      in.Date,
+	return &db.CreateExpenseResponse{
+		Expense: &db.Expense{
+			ExpenseId: expenseId.String(),
+			Title:     in.Expense.Title,
+			Amount:    in.Expense.Amount,
+			Category:  in.Expense.Category,
+			Date:      in.Expense.Date,
+		},
 	}, nil
 }
 
-func (e ExpenseService) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (e ExpenseService) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.GetExpenseResponse, error) {
 
 	expense, err := e.expenseRepository.GetExpense(ctx, in)
 	if err != nil {
 		return nil, err
 	}
-	return &db.ExpenseResponse{
-		ExpenseId: expense.ExpenseId,
-		Title:     expense.Title,
-		Amount:    expense.Amount,
-		Category:  expense.Category,
-		Date:      expense.Date,
+	return &db.GetExpenseResponse{
+		Expense: &db.Expense{
+			ExpenseId: expense.Expense.ExpenseId,
+			Title:     expense.Expense.Title,
+			Amount:    expense.Expense.Amount,
+			Category:  expense.Expense.Category,
+			Date:      expense.Expense.Date,
+		},
 	}, nil
 }
 
-func (e ExpenseService) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (e ExpenseService) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.UpdateExpenseResponse, error) {
 	return e.expenseRepository.UpdateExpense(ctx, in)
 }
 
