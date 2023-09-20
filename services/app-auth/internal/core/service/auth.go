@@ -36,14 +36,14 @@ func (a AuthService) GetUserById(c *gin.Context, userId string) {
 	c.JSON(200, u)
 }
 
-func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.RegisterRes, error) {
+func (a AuthService) Register(ctx *gin.Context, request dto.RegisterRequest) (*dto.RegisterResponseData, error) {
 	//ctx := c.Request.Context()
 	var req dto.RegisterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 	}
 	// Create a new user
 	user := entity.User{
-		Email:    string(request.Email),
+		FullName: request.FullName,
 		UserName: request.FullName,
 		Hash:     request.Password,
 	}
@@ -55,12 +55,11 @@ func (a AuthService) Register(ctx *gin.Context, request dto.RegisterReq) (*dto.R
 		return nil, ErrUsernameTaken
 	}
 
-	return &dto.RegisterRes{
-		CreatedAt:         user.CreatedAt,
-		Email:             user.Email,
-		FullName:          user.FullName,
+	return &dto.RegisterResponseData{
+		CreatedAt: user.CreatedAt,
+		//FullName:          user.FullName,
 		PasswordChangedAt: user.PasswordChangedAt,
-		Username:          user.UserName,
+		//Username:          user.UserName,
 	}, nil
 
 }
