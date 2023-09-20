@@ -8,7 +8,8 @@ import (
 
 type AuthService interface {
 	Register(ctx *gin.Context, request dto.RegisterRequest) (*dto.RegisterResponseData, error)
-	Login(request dto.LoginRequest) (*dto.LoginResponseData, error)
+	Login(request dto.LoginInitRequest) (*dto.LoginInitResponseData, error)
+	//Login(request dto.LoginRequest) (*dto.LoginResponseData, error)
 	RefreshToken(request dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
 	UpdateUser(user entity.User) (*entity.User, error)
 	UserLogout(userUUID string) error

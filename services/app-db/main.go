@@ -1,13 +1,10 @@
-package postgres
-
-import (
-	"fmt"
-	"github.com/jackc/pgx/v5"
-	"os"
-)
+package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/jackc/pgx/v5"
+	"os"
 )
 
 func main() {
@@ -19,13 +16,4 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	//var name string
-	//var weight int64
-	//err = conn.QueryRow(context.Background(), "select name, weight from widgets where id=$1", 42).Scan(&name, &weight)
-	//if err != nil {
-	//	fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-	//	os.Exit(1)
-	//}
-	//
-	//fmt.Println(name, weight)
 }
