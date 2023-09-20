@@ -14,6 +14,7 @@ import (
 type AuthRepo interface {
 	Register(ctx context.Context, registerReq dto.RegisterRequest) (*dto.RegisterResponseData, error)
 	Login(ctx context.Context, loginReq dto.LoginRequest) (*dto.LoginResponseData, error)
+	//Login(ctx context.Context,loginReq dto.LoginInitRequest) (*dto.LoginInitResponseData, error)
 	GetUserByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
 	UpdateUser(ctx context.Context, user entity.User) (*entity.User, error)

@@ -1,6 +1,6 @@
 
 postgres:
-	docker run --name pesaapp -p 5432:5432 -e POSTGRES_USER=mike -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+	docker run --name pesaapp -p 5433:5432 -e POSTGRES_USER=mike -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
 createdb:
 	docker exec -it pesaapp  createdb --username=mike  --owner=mike fedhausers
