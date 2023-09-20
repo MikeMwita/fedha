@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"fmt"
+	"github.com/MikeMwita/fedha.git/services/app-db/internal/core/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -12,14 +13,14 @@ import (
 var db *gorm.DB
 var err error
 
-type User struct {
-	gorm.Model
-	UserId      string
-	UserName    string
-	Email       string
-	PhoneNumber string
-	Hash        string
-}
+//type User struct {
+//	gorm.Model
+//	UserId      string
+//	UserName    string
+//	Email       string
+//	PhoneNumber string
+//	Hash        string
+//}
 
 func NewPostgresDB() (*gorm.DB, error) {
 	dbHost := os.Getenv("POSTGRES_DB_HOST")
@@ -36,12 +37,10 @@ func NewPostgresDB() (*gorm.DB, error) {
 	}
 
 	//migrate the schema
-	db.AutoMigrate(User{})
+	db.AutoMigrate(models.User{}, models.Expense{}, models.ExpenseType{})
 	if err != nil {
 		log.Fatalf("Error applying migrations: %s", err)
 	}
-	// Create
-	//db.Create(&User{UserId: "10", PhoneNumber: "073443444444"})
 
 	return nil, err
 }
