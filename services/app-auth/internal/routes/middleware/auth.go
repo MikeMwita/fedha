@@ -9,24 +9,6 @@ import (
 	"strings"
 )
 
-////token middleware
-//
-//func tokenAuthMiddleware(next http.Handler) http.Handler {
-//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//		// Get the token from the request header
-//		token := r.Header.Get("Authorization")
-//
-//		// Check if the token is valid
-//		if token == "" {
-//			w.WriteHeader(http.StatusUnauthorized)
-//			return
-//		}
-//
-//		// The token is valid, so continue with the request
-//		next.ServeHTTP(w, r)
-//	})
-//}
-
 const (
 	AuthorisationHeader       = "Authorization"
 	AuthorizationBearerPrefix = "Bearer"
