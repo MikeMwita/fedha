@@ -16,14 +16,12 @@ type DbStorage interface {
 	GetUserByUsername(ctx context.Context, in *db.GetUserByUsernameRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	GetUserByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	SaveUser(ctx context.Context, in *db.SaveUserRequest, opts ...grpc.CallOption) (*db.User, error)
-	FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error)
+	//FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error)
 }
 
 type CacheStorage interface {
 	SetAccessToken(ctx context.Context, key string, value string, expiration time.Duration) error
-	//GetAccessToken(ctx context.Context, value string) error
 	GetAccessToken(ctx context.Context, value string) (string, error)
-	//GetAccessToken(ctx context.Context, key string) (token string, err error)
 	DeleteAccessToken(ctx context.Context, key string) error
 	DeleteSession(ctx context.Context, id string) error
 }
