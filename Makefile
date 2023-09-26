@@ -32,6 +32,9 @@ proto:
 redis:
 	docker run --name redis -p 6379:6379 -d redis:7.0.12-alpine
 
+# ==============================================================================
+# Docker support
+
 docker-run:
 	 docker run --name fedhaapp -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:secret@172.20.0.2:5432/fedhaapi?sslmode=disable" fedhaapp
 
