@@ -20,8 +20,9 @@ type SendMail struct {
 func (s *SendMail) SendEmail(subject string, content string, to []string, cc []string, attachFiles []string) error {
 
 	e := email.NewEmail()
-	e.From = s.name + " <" + s.fromEmailAddr + ">"
-	//e.From = s.name + "<" + s.fromEmailAddr + ">"
+	e.From = fmt.Sprintf("%s <%s>", s.name, s.fromEmailAddr)
+
+	//e.From = s.name + " <" + s.fromEmailAddr + ">"
 	e.Subject = subject
 	e.HTML = []byte(content)
 	e.To = to

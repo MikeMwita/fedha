@@ -1,26 +1,39 @@
-version: "3.9"
+version: '3.9'
+
 services:
-  postgres:
-    image: postgres:14-alpine
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=fedhaapp
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_SOURCE=postgresql://root:secret@postgres:5432/fedhaapp?sslmode=disable
+
+  app-db:
+    image: services/app-db
+
+
+  app-payment:
+    image: services/app-payment
     depends_on:
-      - postgres
-    entrypoint:
-      [
-        "/app/wait-for.sh",
-        "postgres:5432",
-        "--",
-        "/app/start.sh"
-      ]
-    command: [ "/app/main" ]
+      - app-db
+    ports:
+      - "8081:80"
+
+  app-notification:
+    image: services/app-notification
+    depends_on:
+      - app-db
+    ports:
+      - "8082:80"
+  app-auth:
+    image: services/app-auth
+    depends_on:
+      - app-db
+    ports:
+      - "8083:80"
+
+  app-expense:
+    image: services/app-expense
+    depends_on:
+      - app-db
+    ports:
+      - "8084:80"
+
+networks:
+    default:
+        name: fedhaapp
+
