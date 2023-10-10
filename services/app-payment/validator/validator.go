@@ -52,3 +52,14 @@ func ValidateSTKPushRequestBody(req *models.STKPushRequestBody) error {
 
 	return nil
 }
+
+// checks if the number is a valid phone number.
+// MSISDN (12 digits Mobile Number) e.g. 2547XXXXXXXX.
+
+func ValidatePhoneNumber(number uint64) bool {
+	if number < 100000000000 || number > 999999999999 {
+		return false
+	}
+
+	return true
+}
