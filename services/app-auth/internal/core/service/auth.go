@@ -19,7 +19,7 @@ var (
 )
 
 type AuthService struct {
-	repo   adapters.AuthRepo
+	repo   adapters.AuthRepository
 	config config.Jwt
 }
 
@@ -41,7 +41,6 @@ func (a AuthService) Register(ctx *gin.Context, request dto.RegisterRequest) (*d
 	var req dto.RegisterReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 	}
-	// Create a new user
 	user := entity.User{
 		FullName: request.FullName,
 		UserName: request.FullName,
@@ -56,16 +55,13 @@ func (a AuthService) Register(ctx *gin.Context, request dto.RegisterRequest) (*d
 	}
 
 	return &dto.RegisterResponseData{
-		CreatedAt: user.CreatedAt,
-		//FullName:          user.FullName,
+		CreatedAt:         user.CreatedAt,
 		PasswordChangedAt: user.PasswordChangedAt,
-		//Username:          user.UserName,
 	}, nil
 
 }
 
 func (a AuthService) Login(request dto.LoginInitRequest) (*dto.LoginInitResponseData, error) {
-	// Validate the login request
 	if err := a.ValidateLoginRequest(request); err != nil {
 		return nil, err
 	}
@@ -81,7 +77,6 @@ func (a AuthService) Login(request dto.LoginInitRequest) (*dto.LoginInitResponse
 		return nil, err
 	}
 
-	// Return the login response data
 	return &dto.LoginInitResponseData{
 		AccessToken: &token,
 	}, nil
@@ -179,6 +174,6 @@ func (a AuthService) UserLogout(userUUID string) error {
 	return nil
 }
 
-func NewAuthService(repo adapters.AuthRepo) adapters.AuthService {
+func NewAuthService(repo adapters.AuthRepository) adapters.AuthService {
 	return &AuthService{repo: repo}
 }
