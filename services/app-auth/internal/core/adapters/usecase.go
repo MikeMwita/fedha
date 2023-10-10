@@ -4,28 +4,18 @@ import (
 	"context"
 	"github.com/MikeMwita/fedha-go-gen.grpc/sdk/go-proto-gen/expense"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/entity"
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
-	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-type AuthUseCase interface {
-	Login(c *gin.Context, data dto.LoginRequest) (*dto.LoginResponseData, error)
-	Register(c *gin.Context, data dto.RegisterRequest) (*dto.RegisterResponseData, error)
-	GetUserById(c *gin.Context, userId string) (string, error)
-	RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
-	UpdateUser(ctx context.Context, user entity.User) (*entity.User, error)
-	UserLogout(c *gin.Context)
-	VerifyAccessToken(token string) (interface{}, interface{})
-}
+//go:generate mockgen -source usecase.go -destination mock/usecase_mock.go -package mock
 
-//grpc
-//RegisterUser(context.Context, *RegUserReq) (*RegUserRes, error)
-//UpdateUser(context.Context, *UpdateUserReq) (*UpdateUserRes, error)
-//GetPagedUsers(context.Context, *GetPagedUsersReq) (*GetPagedUsersRes, error)
-//GetUserByField(context.Context, *GetByfieldReq) (*GetByfieldRes, error)
-//GetUserByUsername(context.Context, *GetUserByUsernameRequest) (*RegUserRes, error)
-//GetUserByID(context.Context, *GetUserByIDRequest) (*RegUserRes, error)
-//SaveUser(context.Context, *SaveUserRequest) (*User, error)
+type AuthUseCase interface {
+	Register(ctx context.Context, user *entity.User) (*entity.UserWithToken, error)
+	Login(ctx context.Context, user *entity.User) (*entity.UserWithToken, error)
+	Update(ctx context.Context, user *entity.User) (*entity.User, error)
+	Delete(ctx context.Context, userID uuid.UUID) error
+	GetByID(ctx context.Context, userID uuid.UUID) (*entity.User, error)
+}
 
 type ExpenseStorageUseCase interface {
 	CreateExpense(context.Context, *expense.ExpenseRequest) (*expense.ExpenseResponse, error)

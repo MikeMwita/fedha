@@ -9,18 +9,8 @@ import (
 	"os"
 )
 
-// FOR GORM
 var db *gorm.DB
 var err error
-
-//type User struct {
-//	gorm.Model
-//	UserId      string
-//	UserName    string
-//	Email       string
-//	PhoneNumber string
-//	Hash        string
-//}
 
 func NewPostgresDB() (*gorm.DB, error) {
 	dbHost := os.Getenv("POSTGRES_DB_HOST")
