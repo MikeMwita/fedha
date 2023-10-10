@@ -11,7 +11,7 @@ type dbStorage struct {
 	client db.DbServiceClient
 }
 
-func (d dbStorage) CreateExpense(ctx context.Context, in *db.ExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (d dbStorage) CreateExpense(ctx context.Context, in *db.CreateExpenseRequest, opts ...grpc.CallOption) (*db.CreateExpenseResponse, error) {
 	resExpense, err := d.client.CreateExpense(ctx, in)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (d dbStorage) CreateExpense(ctx context.Context, in *db.ExpenseRequest, opt
 
 }
 
-func (d dbStorage) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (d dbStorage) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opts ...grpc.CallOption) (*db.GetExpenseResponse, error) {
 	res, err := d.client.GetExpense(ctx, in)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (d dbStorage) GetExpense(ctx context.Context, in *db.GetExpenseRequest, opt
 	return res, nil
 }
 
-func (d dbStorage) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.ExpenseResponse, error) {
+func (d dbStorage) UpdateExpense(ctx context.Context, in *db.UpdateExpenseRequest, opts ...grpc.CallOption) (*db.UpdateExpenseResponse, error) {
 	res, err := d.client.UpdateExpense(ctx, in)
 	if err != nil {
 		return nil, err
