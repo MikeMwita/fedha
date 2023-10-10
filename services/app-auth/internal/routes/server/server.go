@@ -3,34 +3,46 @@ package server
 import (
 	"github.com/MikeMwita/fedha.git/services/app-auth/config"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/core/adapters"
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/routes/handlers"
-	"github.com/MikeMwita/fedha.git/services/app-auth/internal/routes/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 const BaseUrl = "/api"
 
-type Config struct {
-	AuthUsecase adapters.AuthUseCase
+type Server struct {
+	Router      *gin.Engine
+	cfg         *config.Config
+	authUseCase adapters.AuthUseCase
 }
 
-func NewServer(authUseCase adapters.AuthUseCase, cfg config.Config) *gin.Engine {
+func NewServer(authUseCase adapters.AuthUseCase, cfg *config.Config) *Server {
 	r := gin.Default()
-
-	middlewareManager := middleware.NewManager(cfg, authUseCase)
-
-	middlewares := []handlers.MiddlewareFunc{
-		middlewareManager.Auth,
+	server := &Server{
+		Router:      r,
+		cfg:         cfg,
+		authUseCase: authUseCase,
 	}
 
-	options := handlers.GinServerOptions{
-		BaseURL:     BaseUrl,
-		Middlewares: middlewares,
-	}
+	// Define your routes here
+	authGroup := r.Group(BaseUrl + "/auth")
+	authGroup.POST("/login", server.login)
+	authGroup.POST("/register", server.register)
+	authGroup.POST("/logout", server.logout)
 
-	// Map handlers
-	h := handlers.NewHandler(authUseCase)
-	handlers.RegisterHandlersWithOptions(r, h, options)
+	return server
+}
 
-	return r
+func (serve *Server) login(c *gin.Context) {
+	// Your login logic here
+}
+
+func (serve *Server) register(c *gin.Context) {
+	// Your registration logic here
+}
+
+func (serve *Server) logout(c *gin.Context) {
+	// Your logout logic here
+}
+
+func (serve *Server) Run() error {
+	return nil
 }

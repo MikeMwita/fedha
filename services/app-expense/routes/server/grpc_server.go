@@ -21,7 +21,7 @@ type Server struct {
 }
 
 func (s *Server) Run() {
-	log.Infof("DATABASE GRPC server initialising")
+	log.Infof("DATABASE GRPC serve initialising")
 
 	// create database client
 	postgresClient, err := platform.NewDBServiceClient(s.cfg.DB)
@@ -49,7 +49,7 @@ func (s *Server) Run() {
 	// create handler
 	grpcHandler := handlers.NewHandler(balanceservice,expenseService,incomeService,monthly_summaryService
 
-	// run server
+	// run serve
 	lis, err := net.Listen("tcp", ":"+s.cfg.Server.Port)
 	if err != nil {
 		log.Fatal(err)
@@ -59,16 +59,16 @@ func (s *Server) Run() {
 	grpcServer := grpc.NewServer()
 	expense.RegisterExpenseServiceServer(grpcServer, grpcHandler)
 
-	// Run the server
+	// Run the serve
 
-	// wait for interrupt signal to gracefully shutdown the server with
+	// wait for interrupt signal to gracefully shutdown the serve with
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
 		err = grpcServer.Serve(lis)
 		if err != nil {
-			log.Fatal("cannot start apps server:", err)
+			log.Fatal("cannot start apps serve:", err)
 			return
 		}
 	}()

@@ -10,15 +10,64 @@ import (
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
 	"github.com/MikeMwita/fedha.git/services/app-auth/pkg/validation"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
-	"math/rand"
 	"time"
 )
 
 type authRepo struct {
 	dbStorage    adapters.DbStorage
 	cacheStorage adapters.CacheStorage
+}
+
+func (a authRepo) Update(ctx context.Context, userReq *db.UpdateUserReq) (*db.UpdateUserRes, error) {
+	updatedUser, err := a.dbStorage.Update(ctx, userReq)
+	if err != nil {
+		return nil, err
+	}
+	return updatedUser, nil
+}
+
+func (a authRepo) GetByID(ctx context.Context, id uuid.UUID) (*db.RegUserRes, error) {
+	dbGetByIDRequest := &db.GetUserByIDRequest{
+		UserId: id.String(),
+	}
+
+	return a.dbStorage.GetByID(ctx, dbGetByIDRequest)
+
+}
+
+func (a authRepo) FindByEmail(ctx context.Context, user *entity.User) (*entity.User, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (a authRepo) Delete(ctx context.Context, userID uuid.UUID) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (a authRepo) Register(ctx context.Context, registerReq dto.RegisterRequest) (*dto.RegisterResponseData, error) {
+	user := db.RegUserReq{
+
+		FullName:     registerReq.FullName,
+		Email:        string(registerReq.Email),
+		PasswordHash: registerReq.Password,
+		Username:     registerReq.Username,
+	}
+	hashedPassword, err := hashPassword(registerReq.Password)
+	if err != nil {
+		return nil, err
+	}
+	user.PasswordHash = hashedPassword
+	_, err = a.dbStorage.RegisterUser(ctx, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.RegisterResponseData{}, nil
+
 }
 
 func (a authRepo) SetAccessToken(ctx context.Context, key string, value string, expiration time.Duration) error {
@@ -110,28 +159,6 @@ func (a authRepo) DeleteSession(ctx context.Context, record *service.SessionReco
 	return nil
 }
 
-func (a authRepo) Register(ctx context.Context, registerReq dto.RegisterRequest) (*dto.RegisterResponseData, error) {
-	user := db.RegUserReq{
-
-		FullName:     registerReq.FullName,
-		Email:        string(registerReq.Email),
-		PasswordHash: registerReq.Password,
-		Username:     registerReq.Username,
-	}
-	hashedPassword, err := hashPassword(registerReq.Password)
-	if err != nil {
-		return nil, err
-	}
-	user.PasswordHash = hashedPassword
-	_, err = a.dbStorage.RegisterUser(ctx, &user)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.RegisterResponseData{}, nil
-
-}
-
 func hashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -186,7 +213,6 @@ func (a authRepo) UserLogout(c *gin.Context) {
 }
 
 func (a authRepo) DeleteAccessToken(ctx context.Context, key string) error {
-	// Validate the key
 	if key == "" {
 		return errors.New("key cannot be empty")
 	}
@@ -205,20 +231,10 @@ func (a authRepo) RefreshToken(c *gin.Context, data dto.RefreshTokenRequest) (*d
 	accessToken := "accessToken"
 	return &dto.RefreshTokenResponse{
 		AccessToken: accessToken,
-		//ExpiresIn:  time.Now().Add(time.Hour * 24),
-
 	}, nil
 }
 
-func generateRandomString(length int) string {
-	// Generate a random string of the specified length.
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = byte(rand.Intn(256))
-	}
-	return string(b)
-}
-func NewAuthRepo(dbStorage adapters.DbStorage, cacheStorage adapters.CacheStorage) adapters.AuthRepo {
+func NewAuthRepo(dbStorage adapters.DbStorage, cacheStorage adapters.CacheStorage) adapters.AuthRepository {
 	return &authRepo{
 		dbStorage:    dbStorage,
 		cacheStorage: cacheStorage,

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ServerInterface represents all server handlers.
+// ServerInterface represents all serve handlers.
 type ServerInterface interface {
 	// Create a new expense type
 	// (POST /api/v1/expense_type)
@@ -131,7 +131,7 @@ func (siw *ServerInterfaceWrapper) GetUserById(c *gin.Context) {
 	siw.Handler.GetUserById(c, userId)
 }
 
-// GinServerOptions provides options for the Gin server.
+// GinServerOptions provides options for the Gin serve.
 type GinServerOptions struct {
 	BaseURL      string
 	Middlewares  []MiddlewareFunc

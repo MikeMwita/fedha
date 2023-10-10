@@ -116,7 +116,7 @@ WHERE "ExpenseID" = $1
 
 func (e expenseStorage) GetExpenseByID(ctx context.Context, expenseid int32) (*db.Expense, error) {
 	row := e.client.QueryRow(ctx, getExpenseByID, expenseid)
-	var expense db.Expense // Use db.Expense here
+	var expense db.Expense
 	err := row.Scan(
 		&expense.ExpenseID,
 		&expense.ExpenseTypeID,

@@ -1,9 +1,33 @@
 package config
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"github.com/spf13/viper"
+	"log/slog"
 	"os"
+	"time"
 )
+
+type Config struct {
+	Database Database
+	Jwt      Jwt
+	Redis    Redis
+	Metrics  Metrics
+	Jaeger   Jaeger
+	Server   ServerConfig
+	Postgres PostgresConfig
+	Session  Session
+	Cookie   Cookie
+	Logger   Logger
+
+	JaegerCollectorHost string
+	Env                 string
+	IsTracingEnabled    bool
+	ServiceName         string
+	UseJaeger           bool
+}
 
 type Database struct {
 	Host     string
@@ -13,10 +37,10 @@ type Database struct {
 	Dbname   string
 }
 
-type DatabaseService struct {
-	Port string
-	Host string
-}
+//	type DatabaseService struct {
+//		Port string
+//		Host string
+//	}
 type Jwt struct {
 	Secret            string
 	ExpiryMinutes     int
@@ -24,19 +48,123 @@ type Jwt struct {
 }
 
 type Redis struct {
-	Port     string
-	Host     string
 	User     string
+	Host     string
+	Port     string
 	Password string
+
+	RedisAddr      string
+	RedisDB        string
+	RedisDefaultdb string
+	MinIdleConns   int
+	PoolSize       int
+	PoolTimeout    int
+	DB             int
 }
 
-type Config struct {
-	Database     Database
-	Redis        Redis
-	MigrationUrl string
+type Cookie struct {
+	Name     string
+	MaxAge   int
+	Secure   bool
+	HTTPOnly bool
 }
 
-func LoadConfig() (*Config, error) {
+type Session struct {
+	Prefix string
+	Name   string
+	Expire int
+}
+type ServerConfig struct {
+	AppVersion        string
+	Port              string
+	PprofPort         string
+	Mode              string
+	JwtSecretKey      string
+	CookieName        string
+	ReadTimeout       time.Duration
+	WriteTimeout      time.Duration
+	SSL               bool
+	CtxDefaultTimeout time.Duration
+	CSRF              bool
+	Debug             bool
+	MaxConnectionIdle time.Duration
+	Timeout           time.Duration
+	MaxConnectionAge  time.Duration
+	Time              time.Duration
+}
+
+type Metrics struct {
+	URL         string
+	ServiceName string
+}
+
+type Jaeger struct {
+	JaegerCollectorHost string
+	Host                string
+	ServiceName         string
+	LogSpans            bool
+}
+
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
+}
+
+type Logger struct {
+	ctx               context.Context
+	Development       bool
+	DisableCaller     bool
+	DisableStacktrace bool
+	Encoding          string
+	Level             string
+}
+
+func LoadConfig(filename string) (*viper.Viper, error) {
+	v := viper.New()
+	v.SetConfigName(filename)
+	v.AddConfigPath(".")
+	v.AutomaticEnv()
+	if err := v.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			return nil, errors.New("config file not found")
+		}
+		return nil, err
+	}
+
+	return v, nil
+}
+
+func ParseConfig(v *viper.Viper) (*Config, error) {
+	var c Config
+
+	err := v.Unmarshal(&c)
+	if err != nil {
+		slog.Error("unable to decode into struct")
+		return nil, err
+	}
+
+	return &c, nil
+}
+
+func GetConfig(configPath string) (*Config, error) {
+	cfgFile, err := LoadConfig(configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg, err := ParseConfig(cfgFile)
+	if err != nil {
+		return nil, err
+	}
+	return cfg, nil
+}
+
+func LoadConf() (*Config, error) {
 	dbHost, ok := os.LookupEnv("DB_HOST")
 	if !ok {
 		return nil, fmt.Errorf("missing required environment variable DB_HOST")

@@ -105,7 +105,21 @@ func (d dbStorage) FindByUsername(ctx context.Context, username string) (*db.Reg
 	return d.dbClient.GetUserByUsername(ctx, &db.GetUserByUsernameRequest{Username: username})
 }
 
-func NewDbStorage(serviceCfg config.DatabaseService) (adapters.DbStorage, error) {
+func (d dbStorage) Update(ctx context.Context, i *db.UpdateUserReq) (*db.UpdateUserRes, error) {
+	if d.dbClient == nil {
+		return nil, ErrDbDown
+	}
+	return d.dbClient.UpdateUser(ctx, &db.UpdateUserReq{UserId: i.UserId})
+}
+
+func (d dbStorage) GetByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error) {
+	if d.dbClient == nil {
+		return nil, ErrDbDown
+	}
+	return d.dbClient.GetUserByID(ctx, &db.GetUserByIDRequest{UserId: in.UserId})
+}
+
+func NewDbStorage(serviceCfg config.Database) (adapters.DbStorage, error) {
 	client, err := apps.NewDBServiceClient(serviceCfg)
 	if err != nil {
 		return nil, err
