@@ -16,7 +16,8 @@ type DbStorage interface {
 	GetUserByUsername(ctx context.Context, in *db.GetUserByUsernameRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	GetUserByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 	SaveUser(ctx context.Context, in *db.SaveUserRequest, opts ...grpc.CallOption) (*db.User, error)
-	//FindByUsername(ctx context.Context, username string) (*db.RegUserRes, error)
+	Update(ctx context.Context, i *db.UpdateUserReq) (*db.UpdateUserRes, error)
+	GetByID(ctx context.Context, in *db.GetUserByIDRequest, opts ...grpc.CallOption) (*db.RegUserRes, error)
 }
 
 type CacheStorage interface {
