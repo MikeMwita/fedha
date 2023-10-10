@@ -2,14 +2,14 @@ openapi: 3.0.3
 info:
   title: Fedha API
   description: Fedha API
-  version: 2023-04-01
+  version: 2023-08-01
   termsOfService: https://usefedha.ke/terms
   contact:
     name: Fedha
     url: https://usefedha.ke
 servers:
   - url: 'http://127.0.0.1:4010'
-    description: 'Mock server'
+    description: 'Mock serve'
   - url: 'http://localhost:9005/v1'
     description: 'Local'
   - url: 'https://staging-api.usefedha.ke/v1'
