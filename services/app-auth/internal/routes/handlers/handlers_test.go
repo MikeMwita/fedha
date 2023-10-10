@@ -19,91 +19,6 @@ import (
 	"testing"
 )
 
-func TestAuthHandler_GetUserByID(t *testing.T) {
-	type fields struct {
-		AuthUC         adapters.AuthUseCase
-		SessionService service.DefaultSessionService
-		cfg            *config.Config
-		logger         slog.Logger
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   gin.HandlerFunc
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := AuthHandler{
-				AuthUC:         tt.fields.AuthUC,
-				SessionService: tt.fields.SessionService,
-				cfg:            tt.fields.cfg,
-				logger:         tt.fields.logger,
-			}
-			if got := h.GetUserByID(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetUserByID() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-//func TestAuthHandler_Login(t *testing.T) {
-//	type fields struct {
-//		AuthUC         adapters.AuthUseCase
-//		SessionService service.DefaultSessionService
-//		cfg            *config.Config
-//		logger         slog.Logger
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		want   gin.HandlerFunc
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			h := &AuthHandler{
-//				AuthUC:         tt.fields.AuthUC,
-//				SessionService: tt.fields.SessionService,
-//				cfg:            tt.fields.cfg,
-//				logger:         tt.fields.logger,
-//			}
-//			if got := h.Login(); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("Login() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-
-func TestAuthHandler_Logout(t *testing.T) {
-	type fields struct {
-		AuthUC         adapters.AuthUseCase
-		SessionService adapters.SessionService
-		cfg            *config.Config
-		logger         slog.Logger
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   gin.HandlerFunc
-	}{}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := AuthHandler{
-				AuthUC:         tt.fields.AuthUC,
-				SessionService: tt.fields.SessionService,
-				cfg:            tt.fields.cfg,
-				logger:         tt.fields.logger,
-			}
-			if got := h.Logout(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Logout() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestAuthHandler_Register(t *testing.T) {
 	t.Parallel()
 
@@ -161,24 +76,55 @@ func TestAuthHandler_Register(t *testing.T) {
 
 }
 
-func TestNewHandler(t *testing.T) {
-	type args struct {
-		authUC         adapters.AuthUseCase
-		SessionService service.DefaultSessionService
+func TestAuthHandler_GetUserByID(t *testing.T) {
+	type fields struct {
+		AuthUC         adapters.AuthUseCase
+		SessionService service.SessionService
 		cfg            *config.Config
 		logger         slog.Logger
 	}
-	tests := []struct {
-		name string
-		args args
-		want adapters.AuthHandler
-	}{
-		// TODO: Add test cases.
+	var tests []struct {
+		name   string
+		fields fields
+		want   gin.HandlerFunc
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewHandler(tt.args.authUC, tt.args.SessionService, tt.args.cfg, tt.args.logger); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewHandler() = %v, want %v", got, tt.want)
+			h := AuthHandler{
+				AuthUC:         tt.fields.AuthUC,
+				SessionService: tt.fields.SessionService,
+				cfg:            tt.fields.cfg,
+				logger:         tt.fields.logger,
+			}
+			if got := h.GetUserByID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetUserByID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestAuthHandler_Logout(t *testing.T) {
+	type fields struct {
+		AuthUC         adapters.AuthUseCase
+		SessionService adapters.SessionService
+		cfg            *config.Config
+		logger         slog.Logger
+	}
+	var tests []struct {
+		name   string
+		fields fields
+		want   gin.HandlerFunc
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := AuthHandler{
+				AuthUC:         tt.fields.AuthUC,
+				SessionService: tt.fields.SessionService,
+				cfg:            tt.fields.cfg,
+				logger:         tt.fields.logger,
+			}
+			if got := h.Logout(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Logout() = %v, want %v", got, tt.want)
 			}
 		})
 	}
