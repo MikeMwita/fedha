@@ -4,7 +4,7 @@ import (
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/dto"
 	"github.com/MikeMwita/fedha.git/services/app-auth/internal/routes/handlers"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"net/http"
 	"strings"
 )
@@ -24,7 +24,7 @@ func unauthorisedError() dto.DefaultRes[any] {
 	}
 }
 
-func (m *MiddlewareManager) Auth(ctx *gin.Context) {
+func (m middlewareManager) Auth(ctx *gin.Context) {
 	if ctx.IsAborted() {
 		return
 	}
@@ -45,7 +45,7 @@ func (m *MiddlewareManager) Auth(ctx *gin.Context) {
 		// validate token
 		userId, err := m.AuthUsecase.VerifyAccessToken(bearerToken)
 		if err != nil {
-			log.Error(err)
+			slog.Info("error verifying token")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, unauthorisedResponse)
 			return
 		}
