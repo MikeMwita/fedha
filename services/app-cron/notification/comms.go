@@ -8,7 +8,7 @@ func DailyNotification(hour, min, sec int, category string) {
 	//implement me
 }
 
-func WeeklyNotification(weekday time.Weekday, hour, min, sec int, category string) {
+func WeeklyNotification(weekday, hour, min, sec int, category string) {
 	//implement me
 }
 
